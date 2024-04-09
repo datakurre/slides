@@ -18,7 +18,7 @@ jobs:
       with:
         name: datakurre
     - run: nix-shell --run "make"
-    - uses: JamesIves/github-pages-deploy-action@4
+    - uses: JamesIves/github-pages-deploy-action@v4.5.0
       with:
         folder: build
         clean: true
