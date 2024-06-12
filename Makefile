@@ -1,4 +1,4 @@
-TEXFILE ?= camunda-open-source-ecosystem.tex
+TEXFILE ?= 
 
 .PHONY: all
 all: build
@@ -12,8 +12,10 @@ all: build
 %.pdf: %.tex images
 	@latexmk -pdf -recorder -interaction=nonstopmode -shell-escape -use-make -quiet $<
 
+build: camunda-meetup-fi-2024-06.pdf
 build: camunda-open-source-ecosystem.pdf
-	mkdir -p build/alt
+build: pulumi-overview.pdf
+	mkdir -p build
 	mv *.pdf build
 	echo '<meta http-equiv="refresh" content= "0;url=camunda-open-source-ecosystem.pdf" />' > build/index.html
 	touch build/.nojekyll
