@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     outline = {
-      url = "git+file:./vendor/outline";
+      url = "github:datakurre/outline";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -246,7 +246,7 @@
           };
         };
 
-        # Interactive terminal outline editor (from vendor/outline submodule)
+        # Interactive terminal outline editor (from outline flake input)
         outlineEditor = outlinePackage;
 
         default = slides;

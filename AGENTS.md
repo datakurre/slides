@@ -29,7 +29,7 @@ Markdown Document (.md)
   - `packages.<system>.support`: Bundled templates, Lua filters, and CSS styles.
   - `packages.<system>.bpmnRenderer`: Headless BPMN renderer from `github:datakurre/bpmn-to-image`.
   - `devShells.<system>.default`: Development environment with all compilers and tools (`pandoc`, `texliveEnv`, `bpmn-to-image`, `outline-editor`, `librsvg`, `ffmpeg`, `entr`, `python3`, `poppler-utils`).
-- **`vendor/outline/`**: Git submodule (`git@github.com:datakurre/outline`) providing the terminal outline editor as its own Nix flake. Built via `outline.packages.<system>.default`.
+- **`vendor/outline/`**: Git submodule (`https://github.com/datakurre/outline.git`) providing the terminal outline editor as its own Nix flake input (`github:datakurre/outline`). Built via `outline.packages.<system>.default`.
 - **`pandoc/beamer-metropolis.latex`**: LaTeX Beamer template configuring Metropolis, Fira Sans, 16:9 widescreen, custom theme colors, syntax highlighting, and pandoc macros.
 - **`pandoc/slides.lua`**: Pandoc Lua filter handling:
   - `.bpmn` diagram conversion to vector PDF (LaTeX) and vector SVG / animated MP4 (HTML).

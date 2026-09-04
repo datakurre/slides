@@ -64,15 +64,15 @@
       "locked": {
         "lastModified": 1788420003,
         "narHash": "sha256-de/cPQ9TNREWY1QiEFm1/zN6E/CmEOa9FyeYBPWS+lw=",
-        "ref": "refs/heads/main",
+        "owner": "datakurre",
+        "repo": "outline",
         "rev": "ee2be54fcd98d13a190ba4549477fae5f5746987",
-        "revCount": 2,
-        "type": "git",
-        "url": "file:./vendor/outline"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:./vendor/outline"
+        "owner": "datakurre",
+        "repo": "outline",
+        "type": "github"
       }
     },
     "root": {
