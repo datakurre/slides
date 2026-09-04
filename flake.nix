@@ -70,6 +70,9 @@
           install -Dm644 ${./pandoc/beamer-metropolis.latex} $out/pandoc/beamer-metropolis.latex
           install -Dm644 ${./pandoc/metropolis.css} $out/pandoc/metropolis.css
           install -Dm644 ${./pandoc/slides.lua} $out/pandoc/slides.lua
+          echo '<style>' > $out/pandoc/metropolis.html
+          cat ${./pandoc/metropolis.css} >> $out/pandoc/metropolis.html
+          echo '</style>' >> $out/pandoc/metropolis.html
         '';
 
         # BPMN renderer
@@ -211,7 +214,7 @@
             # 1. Build HTML (Reveal.js)
             if [ "$build_html" -eq 1 ]; then
               pandoc -t revealjs --standalone \
-                --css="${support}/pandoc/metropolis.css" \
+                --include-in-header="${support}/pandoc/metropolis.html" \
                 --lua-filter="${support}/pandoc/slides.lua" \
                 --slide-level=2 \
                 -V revealjs-url="https://unpkg.com/reveal.js@^5" \
@@ -264,6 +267,7 @@
             self.packages.${pkgs.stdenv.hostPlatform.system}.bpmnRenderer
             pkgs.pandoc
             pkgs.librsvg
+            pkgs.ghostscript
             pkgs.ffmpeg
             pkgs.entr
             pkgs.gnumake
