@@ -1,5 +1,7 @@
 .DS_Store
 .direnv
+/build/
+/workspace/
 *.aux
 *.egg-info
 *.fdb_latexmk
@@ -10,9 +12,12 @@
 *.nav
 *.out
 *.pdf
+*.html
 *.pyc
 *.snm
 *.toc
 *.vrb
 /.idea/
 /_minted-*/
+result
+compiled/

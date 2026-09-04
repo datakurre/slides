@@ -1,0 +1,3 @@
+[submodule "vendor/outline"]
+	path = vendor/outline
+	url = git@github.com:datakurre/outline

@@ -1,0 +1,123 @@
+% Pandoc Beamer Metropolis Template
+% Modern 16:9 Beamer presentation template using the Metropolis theme and Fira Sans
+
+\documentclass[
+$if(fontsize)$
+  $fontsize$,
+$else$
+  12pt,
+$endif$
+$if(aspectratio)$
+  aspectratio=$aspectratio$,
+$else$
+  aspectratio=169,
+$endif$
+$if(handout)$
+  handout,
+$endif$
+$for(classoption)$
+  $classoption$$sep$,
+$endfor$
+]{beamer}
+
+% Encoding & Typography
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{upquote}
+
+% Metropolis Beamer Theme
+\usetheme{metropolis}
+\usepackage[sfdefault]{FiraSans}
+
+% Custom Colors (configurable via frontmatter theme-color-primary / theme-color-accent or defaults)
+\usepackage{xcolor}
+\definecolor{slideprimary}{HTML}{$if(theme-color-primary)$$theme-color-primary$$else$002957$endif$}
+\definecolor{slideaccent}{HTML}{$if(theme-color-accent)$$theme-color-accent$$else$F1563F$endif$}
+
+\setbeamercolor{palette primary}{fg=white,bg=slideprimary}
+\setbeamercolor{title separator}{fg=slideaccent,bg=slideprimary}
+\setbeamercolor{frametitle}{fg=white,bg=slideprimary}
+\setbeamercolor{progress bar}{fg=slideaccent,bg=slideprimary}
+\setbeamercolor{alerted text}{fg=slideaccent,bg=slideprimary}
+
+\makeatletter
+\setlength{\metropolis@titleseparator@linewidth}{2pt}
+\setlength{\metropolis@progressonsectionpage@linewidth}{2pt}
+\setlength{\metropolis@progressinheadfoot@linewidth}{2pt}
+\makeatother
+
+% Graphics & TikZ
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\DeclareGraphicsExtensions{.png,.pdf,.eps,.jpg,.jpeg}
+\usepackage{tikz}
+\usetikzlibrary{arrows, shapes}
+
+% Pandoc compatibility macros
+\usepackage{hyperref}
+\usepackage{fontawesome}
+\usepackage{multicol}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath,amssymb}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+\providecommand{\passthrough}[1]{#1}
+
+$if(tables)$
+\usepackage{longtable,booktabs,array,calc}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{\fill}
+$endif$
+
+$if(strikeout)$
+\usepackage{soul}
+$endif$
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+% Title Metadata
+$if(title)$
+\title{$title$}
+$endif$
+$if(subtitle)$
+\subtitle{$subtitle$}
+$endif$
+$if(author)$
+\author{$author$}
+$endif$
+$if(date)$
+\date{$date$}
+$endif$
+
+$if(logo)$
+$if(institute)$
+\institute{\vspace{0.5cm}\includegraphics[height=1.2cm]{$logo$}\\\vspace{0.2cm}$institute$}
+$else$
+\institute{\vspace{0.5cm}\includegraphics[height=1.2cm]{$logo$}}
+$endif$
+$else$
+$if(institute)$
+\institute{$institute$}
+$endif$
+$endif$
+
+\begin{document}
+
+$if(title)$
+\setbeamertemplate{footline}[plain]
+\setbeamertemplate{background canvas}[default]
+\maketitle
+$endif$
+
+$body$
+
+\end{document}
