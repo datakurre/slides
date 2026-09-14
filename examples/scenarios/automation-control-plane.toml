@@ -1,0 +1,46 @@
+# Four separate process instances demonstrate both XOR routes.
+fps = 12
+
+[[token]]
+name = "approved-one"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 0
+
+  [[token.step]]
+  element = "Decision"
+  take = "Flow_1lkh9ly"
+
+[[token]]
+name = "rejected-one"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 2000
+
+  [[token.step]]
+  element = "Decision"
+  take = "F4"
+
+[[token]]
+name = "approved-two"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 4000
+
+  [[token.step]]
+  element = "Decision"
+  take = "Flow_1lkh9ly"
+
+[[token]]
+name = "rejected-two"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 6000
+
+  [[token.step]]
+  element = "Decision"
+  take = "F4"

@@ -1,0 +1,47 @@
+# Show both outcomes as two separate process instances. The second token
+# starts after the first has completed, so the XOR never splits one token.
+fps = 12
+
+[[token]]
+name = "valid-order"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 0
+
+  [[token.step]]
+  element = "Split"
+  take = "Flow_0ov532z"
+
+[[token]]
+name = "invalid-order"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 1500
+
+  [[token.step]]
+  element = "Split"
+  take = "F3"
+
+[[token]]
+name = "valid-order-again"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 3000
+
+  [[token.step]]
+  element = "Split"
+  take = "Flow_0ov532z"
+
+[[token]]
+name = "invalid-order-again"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 4500
+
+  [[token.step]]
+  element = "Split"
+  take = "F3"

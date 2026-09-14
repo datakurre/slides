@@ -1,15 +1,18 @@
--- Pandoc Lua filter for presentation slides (Beamer PDF & Reveal.js HTML)
+-- Pandoc Lua filter for presentation slides (Beamer PDF & Marp HTML)
 --
 -- Features:
 -- 1. BPMN 2.0 diagrams (.bpmn, .xml, ```bpmn code blocks) rendered to SVG/PDF via bpmn-to-image
 -- 2. SVG images converted to PDF via rsvg-convert for pdflatex
--- 3. MP4/WebM videos: native HTML5 <video> in Reveal.js, ffmpeg poster snapshot in Beamer PDF
--- 4. Standout slides and presentation helpers across both backends
+-- 3. BPMN animations rendered as WebP in Marp and a middle frame in Beamer PDF
+-- 4. MP4/WebM videos: native HTML5 <video> in Marp, ffmpeg poster snapshot in Beamer PDF
+-- 5. Standout slides and presentation helpers across both backends
 
 local is_latex = FORMAT:match('latex') or FORMAT:match('beamer')
-local is_html = FORMAT:match('html') or FORMAT:match('revealjs')
+local is_marp = FORMAT:match('markdown') or FORMAT:match('gfm')
 
-local tmpdir = os.getenv('SLIDES_TMPDIR') or os.getenv('TMPDIR') or '/tmp'
+local tmpdir = os.getenv('SLIDES_CACHE_DIR') or os.getenv('SLIDES_TMPDIR') or os.getenv('TMPDIR') or '/tmp'
+
+local is_fast = os.getenv('SLIDES_FAST') == '1' or os.getenv('SLIDES_FAST') == 'true'
 
 local function file_exists(name)
   local f = io.open(name, 'r')
@@ -116,9 +119,25 @@ local function get_hash(text)
   return pandoc.utils.sha1(text)
 end
 
+-- Hash the contents so a changed source at the same path invalidates its cache.
+local function get_file_hash(path)
+  return get_hash(read_file(path) or path)
+end
+
+local function html_image(src, attributes)
+  local safe_src = tostring(src):gsub('&', '&amp;'):gsub('"', '&quot;')
+  local styles = {}
+  if attributes then
+    if attributes.width then table.insert(styles, 'width:' .. attributes.width) end
+    if attributes.height then table.insert(styles, 'height:' .. attributes.height) end
+  end
+  local style = #styles > 0 and ' style="' .. table.concat(styles, ';') .. '"' or ''
+  return pandoc.RawInline('html', '<img src="' .. safe_src .. '" alt=""' .. style .. '>')
+end
+
 -- Convert BPMN XML to SVG using bpmn-to-image
 local function bpmn_to_svg(bpmn_path, bg_color)
-  local hash = get_hash(bpmn_path .. (bg_color or ''))
+  local hash = get_hash(get_file_hash(bpmn_path) .. (bg_color or ''))
   local svg_path = pandoc.path.join({tmpdir, 'bpmn-' .. hash .. '.svg'})
   
   if not file_exists(svg_path) then
@@ -138,6 +157,14 @@ local function bpmn_to_svg(bpmn_path, bg_color)
   return svg_path
 end
 
+-- Generate BPMN DI for temporary files created from inline BPMN blocks.
+local function bpmn_autolayout(bpmn_path)
+  local ok, err = pcall(pandoc.pipe, 'bpmn-autolayout', {bpmn_path}, '')
+  if not ok then
+    error(('slides: bpmn-autolayout failed for %s:\n%s\n'):format(bpmn_path, tostring(err)))
+  end
+end
+
 -- Convert SVG to PDF using rsvg-convert
 local function svg_to_pdf(svg_path)
   local hash = get_hash(svg_path)
@@ -152,14 +179,17 @@ local function svg_to_pdf(svg_path)
   return pdf_path
 end
 
--- Convert BPMN to animated MP4 / GIF for HTML slides
-local function bpmn_to_video(bpmn_path, scenario_path, format)
-  local fmt = format or 'mp4'
-  local hash = get_hash(bpmn_path .. (scenario_path or '') .. fmt)
-  local out_path = pandoc.path.join({tmpdir, 'bpmn-anim-' .. hash .. '.' .. fmt})
+-- Convert BPMN to animated WebP for browser slides.
+local function bpmn_to_webp(bpmn_path, scenario_path, bg_color)
+  local hash = get_hash(get_file_hash(bpmn_path) .. (scenario_path and get_file_hash(scenario_path) or '') .. (bg_color or '') .. 'webp')
+  local out_path = pandoc.path.join({tmpdir, 'bpmn-anim-' .. hash .. '.webp'})
   
   if not file_exists(out_path) then
-    local args = {'--format', fmt}
+    local args = {'--format', 'webp', '--smooth'}
+    if bg_color then
+      table.insert(args, '--background')
+      table.insert(args, bg_color)
+    end
     if scenario_path and file_exists(scenario_path) then
       table.insert(args, '--scenario')
       table.insert(args, scenario_path)
@@ -169,10 +199,58 @@ local function bpmn_to_video(bpmn_path, scenario_path, format)
     
     local ok, err = pcall(pandoc.pipe, 'bpmn-to-image', args, '')
     if not ok then
-      error(('slides: bpmn-to-image animation failed for %s:\n%s\n'):format(bpmn_path, tostring(err)))
+      error(('slides: bpmn-to-image WebP animation failed for %s:\n%s\n'):format(bpmn_path, tostring(err)))
     end
   end
   return out_path
+end
+
+-- Render animation frames and return the central frame for static PDF output.
+local function bpmn_to_middle_frame(bpmn_path, scenario_path, bg_color)
+  local hash = get_hash(get_file_hash(bpmn_path) .. (scenario_path and get_file_hash(scenario_path) or '') .. (bg_color or '') .. 'frames')
+  local frames_dir = pandoc.path.join({tmpdir, 'bpmn-frames-' .. hash})
+  local frame_path = pandoc.path.join({tmpdir, 'bpmn-middle-' .. hash .. '.svg'})
+
+  if not file_exists(frame_path) then
+    local args = {'--frames', frames_dir, '--format', 'svg'}
+    if bg_color then
+      table.insert(args, '--background')
+      table.insert(args, bg_color)
+    end
+    if scenario_path and file_exists(scenario_path) then
+      table.insert(args, '--scenario')
+      table.insert(args, scenario_path)
+    end
+    table.insert(args, bpmn_path)
+
+    local ok, err = pcall(pandoc.pipe, 'bpmn-to-image', args, '')
+    if not ok then
+      error(('slides: bpmn-to-image animation frames failed for %s:\n%s\n'):format(bpmn_path, tostring(err)))
+    end
+
+    local listing = pandoc.pipe('find', {frames_dir, '-maxdepth', '1', '-type', 'f', '-name', 'frame-*.svg', '-print'}, '')
+    local frames = {}
+    for frame in listing:gmatch('[^\n]+') do
+      table.insert(frames, frame)
+    end
+    table.sort(frames)
+    if #frames == 0 then
+      error(('slides: bpmn-to-image produced no animation frames for %s\n'):format(bpmn_path))
+    end
+
+    local middle = frames[math.floor(#frames / 2) + 1]
+    local content = read_file(middle)
+    if not content then
+      error(('slides: failed to read BPMN animation frame %s\n'):format(middle))
+    end
+    local output = io.open(frame_path, 'wb')
+    if not output then
+      error(('slides: failed to write BPMN middle frame %s\n'):format(frame_path))
+    end
+    output:write(content)
+    output:close()
+  end
+  return frame_path
 end
 
 -- Extract poster frame from video using ffmpeg
@@ -182,12 +260,12 @@ local function extract_video_poster(video_path)
   
   if not file_exists(poster_path) then
     local ok, _ = pcall(pandoc.pipe, 'ffmpeg', {
-      '-y', '-ss', '00:00:01', '-i', video_path, '-vframes', '1', poster_path
+      '-y', '-ss', '00:00:01', '-i', video_path, '-vframes', '1', '-update', '1', poster_path
     }, '')
     if not ok or not file_exists(poster_path) then
       -- Try at 00:00:00 if 1s fails
       pcall(pandoc.pipe, 'ffmpeg', {
-        '-y', '-ss', '00:00:00', '-i', video_path, '-vframes', '1', poster_path
+        '-y', '-ss', '00:00:00', '-i', video_path, '-vframes', '1', '-update', '1', poster_path
       }, '')
     end
   end
@@ -249,33 +327,41 @@ function Image(img)
     local scenario = img.attributes.scenario
     if scenario then scenario = resolve_path(scenario) or scenario end
     local animated = img.attributes.animated == 'true' or scenario ~= nil
-    local bg = img.attributes.background or (is_latex and 'white' or nil)
+    local bg = img.attributes.background
+
+    local img_fast = is_fast
+    if img.attributes.fast ~= nil then
+      local fa = img.attributes.fast:lower()
+      if fa == 'true' or fa == '1' or fa == 'yes' then
+        img_fast = true
+      elseif fa == 'false' or fa == '0' or fa == 'no' then
+        img_fast = false
+      end
+    end
+
+    local show_animation = animated and not img_fast
     
     if is_latex then
-      local svg_path = bpmn_to_svg(resolved_src, bg or 'white')
-      local pdf_path = svg_to_pdf(svg_path)
-      img.src = pdf_path
+      if show_animation then
+        local frame_path = bpmn_to_middle_frame(resolved_src, scenario, bg)
+        img.src = svg_to_pdf(frame_path)
+      else
+        local svg_path = bpmn_to_svg(resolved_src, bg)
+        local pdf_path = svg_to_pdf(svg_path)
+        img.src = pdf_path
+      end
       return img
-    elseif is_html then
-      if animated then
-        local anim_format = img.attributes.format or 'mp4'
-        local anim_path = bpmn_to_video(resolved_src, scenario, anim_format)
-        local anim_data = file_to_data_uri(anim_path, get_mime_type(anim_format))
-        local anim_src = anim_data or anim_path
-        if anim_format == 'mp4' or anim_format == 'webm' then
-          return pandoc.RawInline('html', string.format(
-            '<video src="%s" data-autoplay autoplay loop muted controls playsinline style="max-width:100%%; max-height:70vh; margin:0 auto; display:block;"></video>',
-            anim_src
-          ))
-        else
-          img.src = anim_src
-          return img
-        end
+    elseif is_marp then
+      if show_animation then
+        local anim_path = bpmn_to_webp(resolved_src, scenario, bg)
+        local anim_data = file_to_data_uri(anim_path, 'image/webp')
+        img.src = anim_data or anim_path
+        return html_image(img.src, img.attributes)
       else
         local svg_path = bpmn_to_svg(resolved_src, bg)
         local data_uri = file_to_data_uri(svg_path, 'image/svg+xml')
         img.src = data_uri or svg_path
-        return img
+        return html_image(img.src, img.attributes)
       end
     end
   end
@@ -288,10 +374,11 @@ function Image(img)
     if is_latex then
       img.src = svg_to_pdf(resolved_src)
       return img
-    elseif is_html then
-      local data_uri = file_to_data_uri(resolved_src, 'image/svg+xml')
-      img.src = data_uri or resolved_src
-      return img
+      elseif is_marp then
+        local data_uri = file_to_data_uri(resolved_src, 'image/svg+xml')
+        img.src = data_uri or resolved_src
+        if is_marp then return html_image(img.src, img.attributes) end
+        return img
     end
   end
 
@@ -303,12 +390,13 @@ function Image(img)
     if is_latex then
       img.src = eps_to_pdf(resolved_src)
       return img
-    elseif is_html then
+    elseif is_marp then
       local png_path = eps_to_png(resolved_src)
-      if png_path then
-        local data_uri = file_to_data_uri(png_path, 'image/png')
-        img.src = data_uri or png_path
-        return img
+        if png_path then
+          local data_uri = file_to_data_uri(png_path, 'image/png')
+          img.src = data_uri or png_path
+          if is_marp then return html_image(img.src, img.attributes) end
+          return img
       end
     end
   end
@@ -325,7 +413,7 @@ function Image(img)
         img.src = poster
         return img
       end
-    elseif is_html then
+    elseif is_marp then
       local autoplay = img.attributes.autoplay ~= 'false' and 'data-autoplay autoplay ' or ''
       local loop = img.attributes.loop ~= 'false' and 'loop ' or ''
       local muted = img.attributes.muted ~= 'false' and 'muted ' or ''
@@ -340,19 +428,20 @@ function Image(img)
       end
 
       return pandoc.RawInline('html', string.format(
-        '<video src="%s" %s%s%s%splaysinline style="max-width:100%%; max-height:70vh; margin:0 auto; display:block;"></video>',
+        '<video class="slides-video" src="%s" %s%s%s%splaysinline></video>',
         video_src, autoplay, loop, muted, controls
       ))
     end
   end
   
   -- Handle Standard Images (PNG, JPG, GIF, WebP, etc.)
-  if is_html then
+  if is_marp then
     if resolved_src then
       local mime = get_mime_type(ext or '')
       local data_uri = file_to_data_uri(resolved_src, mime)
       if data_uri then
         img.src = data_uri
+        if is_marp then return html_image(img.src, img.attributes) end
         return img
       end
     end
@@ -378,22 +467,68 @@ function CodeBlock(block)
         f:close()
       end
     end
+
+    bpmn_autolayout(bpmn_path)
     
     if is_latex then
-      local svg_path = bpmn_to_svg(bpmn_path, 'white')
+      local svg_path = bpmn_to_svg(bpmn_path, nil)
       local pdf_path = svg_to_pdf(svg_path)
       return pandoc.Para({pandoc.Image(pandoc.List(), pdf_path)})
-    elseif is_html then
+    elseif is_marp then
       local svg_path = bpmn_to_svg(bpmn_path, nil)
       local data_uri = file_to_data_uri(svg_path, 'image/svg+xml')
+      if is_marp then
+        return pandoc.Para({html_image(data_uri or svg_path)})
+      end
       return pandoc.Para({pandoc.Image(pandoc.List(), data_uri or svg_path)})
     end
   end
   return block
 end
 
+-- Marp uses horizontal rules as slide separators, while Pandoc's Markdown
+-- writer keeps the heading hierarchy intact.
+function Header(header)
+  if is_marp and header.level == 2 then
+    return pandoc.List({
+      pandoc.RawBlock('markdown', '---'),
+      header,
+    })
+  end
+  return header
+end
+
+-- Beamer creates a title frame from document metadata. Marp needs that frame
+-- represented explicitly in the Markdown stream.
+function Pandoc(doc)
+  if not is_marp or not doc.meta.title then
+    return doc
+  end
+
+  local title = pandoc.utils.stringify(doc.meta.title)
+  local title_blocks = pandoc.List({
+    pandoc.RawBlock('markdown', '<!-- _class: title-slide -->'),
+    pandoc.Header(1, {pandoc.Str(title)}),
+  })
+  local metadata_fields = {'subtitle', 'author', 'date', 'institute'}
+  for _, field in ipairs(metadata_fields) do
+    if doc.meta[field] then
+      title_blocks:insert(pandoc.Para({pandoc.Str(pandoc.utils.stringify(doc.meta[field]))}))
+    end
+  end
+  title_blocks:insert(pandoc.RawBlock('markdown', '---'))
+  title_blocks:extend(doc.blocks)
+  doc.blocks = title_blocks
+  return doc
+end
+
 -- Process Divs (Standout frames, Custom blocks)
 function Div(div)
+  if is_marp and div.classes:includes('column') and div.attributes.width then
+    local width = div.attributes.width
+    div.attributes.style = 'width:' .. width .. ';flex-basis:' .. width .. ';'
+  end
+
   if div.classes:includes('plain') then
     if is_latex then
       local blocks = pandoc.List({pandoc.RawBlock('latex', '\\begin{frame}[plain]')})
@@ -440,7 +575,7 @@ function Meta(meta)
         else
           meta.logo = pandoc.MetaString(resolved)
         end
-      elseif is_html then
+      elseif is_marp then
         if ext == 'eps' then
           local png_path = eps_to_png(resolved)
           if png_path then
@@ -456,5 +591,26 @@ function Meta(meta)
     end
   end
   
+  -- Handle fast mode
+  if meta.fast ~= nil then
+    local v = pandoc.utils.stringify(meta.fast):lower()
+    if v == 'false' or v == '0' or v == 'no' or meta.fast == false then
+      is_fast = false
+    elseif v == 'true' or v == '1' or v == 'yes' or meta.fast == true or v == '' then
+      is_fast = true
+    end
+  end
+
   return meta
 end
+
+return {
+  { Meta = Meta },
+  {
+    Pandoc = Pandoc,
+    Header = Header,
+    Div = Div,
+    CodeBlock = CodeBlock,
+    Image = Image,
+  }
+}

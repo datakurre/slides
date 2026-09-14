@@ -1,0 +1,55 @@
+fps = 12
+
+[[token]]
+name = "normal-payment-one"
+  [[token.step]]
+  element = "Start"
+  at_ms = 0
+
+[[token]]
+name = "timeout-payment-one"
+  [[token.step]]
+  element = "Start"
+  at_ms = 1500
+  [[token.step]]
+  element = "Boundary_Timeout"
+  at_ms = 2000
+
+[[token]]
+name = "normal-payment-two"
+  [[token.step]]
+  element = "Start"
+  at_ms = 3500
+
+[[token]]
+name = "timeout-payment-two"
+  [[token.step]]
+  element = "Start"
+  at_ms = 5000
+  [[token.step]]
+  element = "Boundary_Timeout"
+  at_ms = 5500
+
+[[token]]
+name = "error-payment-one"
+  [[token.step]]
+  element = "Start"
+  at_ms = 7000
+  [[token.step]]
+  element = "Boundary_Timeout"
+  at_ms = 7500
+  [[token.step]]
+  element = "Event_0v187hv"
+  at_ms = 8500
+
+[[token]]
+name = "error-payment-two"
+  [[token.step]]
+  element = "Start"
+  at_ms = 10000
+  [[token.step]]
+  element = "Boundary_Timeout"
+  at_ms = 10500
+  [[token.step]]
+  element = "Event_0v187hv"
+  at_ms = 11500

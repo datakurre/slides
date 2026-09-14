@@ -1,6 +1,8 @@
 FILE ?= examples/demo.md
 MARKDOWN ?= $(wildcard examples/*.md)
 PORT ?= 8000
+FAST ?= 0
+FAST_FLAG = $(if $(filter 1 true yes,$(FAST)),--fast,)
 
 .PHONY: all
 all: build
@@ -14,7 +16,7 @@ build: ## Build all markdown presentations (PDF and HTML) into build/
 	@mkdir -p build
 	@for doc in $(MARKDOWN); do \
 		echo "==> Building $$doc"; \
-		nix run . -- --all "$$doc" || exit 1; \
+		nix run . -- --all $(FAST_FLAG) "$$doc" || exit 1; \
 	done
 	@cp -f examples/*.pdf examples/*.html build/ 2>/dev/null || true
 	@cp -rf images pulumi-images examples/diagrams build/ 2>/dev/null || true
@@ -22,31 +24,35 @@ build: ## Build all markdown presentations (PDF and HTML) into build/
 	@python3 pandoc/generate-index.py
 	@echo "Build complete in ./build"
 
+.PHONY: fast
+fast: ## Build all markdown presentations in fast mode (images instead of animations)
+	@$(MAKE) build FAST=1
+
 .PHONY: pdf
 pdf: ## Build only PDF presentations
 	@mkdir -p build
 	@for doc in $(MARKDOWN); do \
 		echo "==> Building PDF for $$doc"; \
-		nix run . -- --pdf "$$doc" || exit 1; \
+		nix run . -- --pdf $(FAST_FLAG) "$$doc" || exit 1; \
 	done
 	@cp examples/*.pdf build/ 2>/dev/null || true
 
-.PHONY: html
-html: ## Build only HTML presentations
+.PHONY: marp
+marp: ## Build Marp HTML presentations
 	@mkdir -p build
 	@for doc in $(MARKDOWN); do \
-		echo "==> Building HTML for $$doc"; \
-		nix run . -- --html "$$doc" || exit 1; \
+		echo "==> Building Marp HTML for $$doc"; \
+		nix run . -- --marp $(FAST_FLAG) "$$doc" || exit 1; \
 	done
 	@cp examples/*.html build/ 2>/dev/null || true
 
 .PHONY: watch
 watch: ## Watch and auto-rebuild on changes (usage: make watch FILE=examples/demo.md)
-	@nix run . -- --watch $(FILE)
+	@nix run . -- --watch $(FAST_FLAG) $(FILE)
 
 .PHONY: serve
 serve: ## Start local HTTP preview server with live reload (usage: make serve FILE=examples/demo.md PORT=8000)
-	@nix run . -- --serve $(PORT) $(FILE)
+	@nix run . -- --serve $(PORT) $(FAST_FLAG) $(FILE)
 
 .PHONY: outline
 outline: ## Interactive outline editor (usage: make outline FILE=examples/demo.md)

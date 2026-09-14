@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language>
+<language name="robotframework" version="1" kateversion="5.0" section="Scripts" extensions="*.robot;*.resource;*.robotframework" mimetype="text/x-robotframework">
+  <highlighting>
+    <contexts>
+      <context name="Normal" attribute="Normal Text" lineEndContext="#stay">
+        <!-- Comments -->
+        <RegExpr attribute="Comment" context="#stay" String="#.*$" />
+
+        <!-- Section Headers -->
+        <RegExpr attribute="Section" context="#stay" String="^\s*\*+[\s\w]+\*+.*$" column="0" />
+
+        <!-- Indented line (step inside test/task/keyword) -->
+        <RegExpr attribute="Normal Text" context="StepLine" String="^\s{2,}|\t+" column="0" />
+
+        <!-- Control flow at column 0 (e.g. VAR at line start) -->
+        <RegExpr attribute="Control" context="Arguments" String="^(IF|ELSE IF|ELSE|END|FOR|IN RANGE|IN ZIP|IN ENUMERATE|IN|WHILE|TRY|EXCEPT|FINALLY|VAR|RETURN|CONTINUE|BREAK)(?=\s{2,}|\s*$)" column="0" />
+
+        <!-- Continuation at column 0 -->
+        <RegExpr attribute="Control" context="Arguments" String="^\.\.\.(?=\s{2,}|\s*$)" column="0" />
+
+        <!-- Settings at column 0 -->
+        <RegExpr attribute="Setting" context="Arguments" String="^(Library|Resource|Variables|Documentation|Metadata|Suite Setup|Suite Teardown|Test Setup|Test Teardown|Test Template|Test Timeout|Test Tags|Task Setup|Task Teardown|Task Template|Task Timeout|Task Tags|Setup|Teardown|Template|Timeout|Tags|Arguments|Return)(?=\s{2,}|\s*$)" column="0" />
+
+        <!-- Variable assignment at column 0 -->
+        <RegExpr attribute="Variable" context="AfterAssign" String="^[\$@&amp;%]\{[^\}]+\}(?=\s*=)" column="0" />
+
+        <!-- Test Case / Task Header at column 0 -->
+        <RegExpr attribute="TaskTitle" context="#stay" String="^[a-zA-Z0-9][^\t\r\n]*" column="0" />
+      </context>
+
+      <!-- Inside an indented step -->
+      <context name="StepLine" attribute="Normal Text" lineEndContext="#pop">
+        <!-- Comments -->
+        <RegExpr attribute="Comment" context="#stay" String="#.*$" />
+
+        <!-- Control flow -->
+        <RegExpr attribute="Control" context="Arguments" String="\b(IF|ELSE IF|ELSE|END|FOR|IN RANGE|IN ZIP|IN ENUMERATE|IN|WHILE|TRY|EXCEPT|FINALLY|VAR|RETURN|CONTINUE|BREAK)(?=\s{2,}|\s*$)" />
+
+        <!-- Continuation -->
+        <RegExpr attribute="Control" context="Arguments" String="\.\.\.(?=\s{2,}|\s*$)" />
+
+        <!-- Variable assignment: ${var}= or &{dict}= etc. -->
+        <RegExpr attribute="Variable" context="AfterAssign" String="[\$@&amp;%]\{[^\}]+\}(?=\s*=)" />
+
+        <!-- Keyword call -->
+        <RegExpr attribute="KeywordCall" context="Arguments" String="[a-zA-Z0-9_]+(\s+[a-zA-Z0-9_]+)*(?=\s{2,}|\s*$)" />
+      </context>
+
+      <!-- After variable assignment, consume = and spaces, then expect keyword call -->
+      <context name="AfterAssign" attribute="Normal Text" lineEndContext="#pop">
+        <DetectChar attribute="Operator" context="#stay" char="=" />
+        <RegExpr attribute="Comment" context="#stay" String="#.*$" />
+        <RegExpr attribute="KeywordCall" context="Arguments" String="[a-zA-Z0-9_]+(\s+[a-zA-Z0-9_]+)*(?=\s{2,}|\s*$)" />
+        <RegExpr attribute="Control" context="Arguments" String="\b(IF|ELSE IF|ELSE|END|FOR|IN RANGE|IN ZIP|IN ENUMERATE|IN|WHILE|TRY|EXCEPT|FINALLY|VAR|RETURN|CONTINUE|BREAK)(?=\s{2,}|\s*$)" />
+      </context>
+
+      <!-- Arguments / rest of line -->
+      <context name="Arguments" attribute="Normal Text" lineEndContext="#pop">
+        <RegExpr attribute="Comment" context="#stay" String="#.*$" />
+        <RegExpr attribute="Variable" context="#stay" String="[\$@&amp;%]\{[^\}]+\}(\[[^\]]+\])?" />
+        <RegExpr attribute="Parameter" context="#stay" String="[a-zA-Z0-9_:\.\-]+=(?!=)" />
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsNormal"/>
+      <itemData name="Section" defStyleNum="dsKeyword" bold="1" />
+      <itemData name="Control" defStyleNum="dsControlFlow" bold="1" />
+      <itemData name="Setting" defStyleNum="dsKeyword" bold="1" />
+      <itemData name="Variable" defStyleNum="dsVariable"/>
+      <itemData name="Parameter" defStyleNum="dsAttribute"/>
+      <itemData name="TaskTitle" defStyleNum="dsFunction" bold="1"/>
+      <itemData name="KeywordCall" defStyleNum="dsFunction"/>
+      <itemData name="Comment" defStyleNum="dsComment"/>
+      <itemData name="Operator" defStyleNum="dsOperator"/>
+    </itemDatas>
+  </highlighting>
+</language>

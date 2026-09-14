@@ -1,6 +1,6 @@
 ---
 title: "Modern Presentation Slides"
-subtitle: "Authoring with Markdown, Beamer Metropolis & Reveal.js"
+subtitle: "Authoring with Markdown, Beamer Metropolis & Marp"
 author: "Asko Soukka"
 date: "2026-08-30"
 institute: "University of Jyväskylä"
@@ -16,7 +16,7 @@ colors:
 - **Master format in Markdown**: Clean, version-controllable, distraction-free
 - **Dual output**:
   - **PDF**: Professional LaTeX Beamer using the *Metropolis* theme
-  - **HTML**: Interactive *Reveal.js* presentations for web delivery
+  - **HTML**: Linear *Marp* presentations for web delivery
 - **Embedded BPMN**: Direct rendering of `.bpmn` diagrams via `bpmn-to-image`
 - **Reproducible environment**: Managed with Nix Flakes (`nix develop`)
 
@@ -24,7 +24,7 @@ colors:
 
 Write Markdown.
 
-Generate Beamer PDF & Reveal.js HTML.
+Generate Beamer PDF & Marp HTML.
 
 # BPMN Process Diagrams
 
@@ -46,7 +46,7 @@ The diagram is rendered to SVG/PDF automatically at build time.
 * Declarative Nix Flake
 * Pandoc Lua filters
 * TeX Live Metropolis
-* Reveal.js 5 HTML
+* Marp HTML
 :::
 
 ::: {.column width="48%"}
@@ -74,7 +74,7 @@ The diagram is rendered to SVG/PDF automatically at build time.
 
 ## Tables and Data
 
-| Feature | LaTeX Beamer (PDF) | Reveal.js (HTML) |
+| Feature | LaTeX Beamer (PDF) | Marp (HTML) |
 |:---|:---:|:---:|
 | Metropolis Theme | Yes (Native) | Yes (CSS) |
 | BPMN Diagrams | Vector PDF | Vector SVG |

@@ -1,6 +1,6 @@
 # Modern Slide Deck Authoring Environment
 
-A reproducible Markdown-first presentation authoring environment that compiles into both professional **LaTeX Beamer (Metropolis theme)** PDFs and interactive **Reveal.js 5** HTML presentations, featuring native **BPMN 2.0 diagram embedding** and video support.
+A reproducible Markdown-first presentation authoring environment that compiles into professional **LaTeX Beamer (Metropolis theme)** PDFs and linear **Marp** HTML presentations, featuring native **BPMN 2.0 diagram embedding** and video support.
 
 Powered by [Nix Flakes](https://nixos.org), [Pandoc](https://pandoc.org), and [`bpmn-to-image`](https://github.com/datakurre/bpmn-to-image).
 
@@ -11,7 +11,7 @@ Powered by [Nix Flakes](https://nixos.org), [Pandoc](https://pandoc.org), and [`
 - **Markdown Master Format**: Write clean, version-controllable presentations in Markdown.
 - **Dual Output Compilation**:
   - **Beamer PDF**: Modern 16:9 widescreen slides styled with the [Metropolis theme](https://github.com/matze/mtheme) and Fira Sans typography.
-  - **Reveal.js HTML**: Interactive, web-ready HTML5 presentations styled to match the Metropolis aesthetic.
+- **Marp HTML**: Linear, Markdown-native HTML presentations with no two-dimensional navigation.
 - **BPMN 2.0 Process Diagrams**: Embed `.bpmn` files or inline ```` ```bpmn ```` blocks (automatically rendered to vector SVG/PDF or animated formats via headless `bpmn-to-image`).
 - **Video & Animations**: Native HTML5 `<video>` embedding in HTML slides and automated poster frame extraction with `ffmpeg` in Beamer PDFs.
 - **Live Development**: Live reload on file change (`--watch`) and built-in local preview server (`--serve`).
@@ -37,7 +37,10 @@ slides examples/demo.md
 
 # Build only PDF or only HTML
 slides --pdf examples/demo.md
-slides --html examples/demo.md
+slides --marp examples/demo.md
+
+# Fast mode: static images instead of animations for BPMN diagrams
+slides --fast examples/demo.md
 
 # Watch mode: automatically recompile on save
 slides --watch examples/demo.md
@@ -51,7 +54,8 @@ You can also run without entering a subshell using `nix run`:
 ```bash
 nix run . -- examples/demo.md
 nix run . -- --pdf examples/demo.md
-nix run . -- --html examples/demo.md
+nix run . -- --marp examples/demo.md
+nix run . -- --fast examples/demo.md
 nix run . -- --watch examples/demo.md
 nix run . -- --serve 8000 examples/demo.md
 nix run .#outline-editor -- examples/demo.md   # Interactive outline editor
@@ -61,8 +65,9 @@ nix run .#outline-editor -- examples/demo.md   # Interactive outline editor
 
 ```bash
 make build              # Build all presentations into build/
+make fast               # Build all presentations in fast mode (images instead of animations)
 make pdf                # Build only PDF presentations
-make html               # Build only HTML presentations
+make marp               # Build Marp HTML presentations
 make watch FILE=deck.md # Watch a specific presentation
 make serve FILE=deck.md # Live preview server
 make outline FILE=deck.md # Edit presentation outline in terminal
@@ -90,9 +95,12 @@ colors:
   primary: "#002957" # Palette primary (headers, frame titles, standouts)
   accent: "#F1563F" # Accent color (progress bar, title separators)
 aspectratio: "169" # 16:9 widescreen (default) or "43" (4:3)
-fontsize: 12pt # 10pt, 11pt, 12pt, 14pt (default: 12pt)
+fontsize: 12pt # Shared PDF and HTML base size: 10pt, 11pt, 12pt, 14pt
+fast: false # Fast compilation mode (render static images instead of animations)
 ---
 ```
+`fontsize` controls both outputs. For HTML, the value is converted using the
+presentation scale `12pt = 30px`.
 
 ### Slide Syntax & Features
 
@@ -113,7 +121,7 @@ Use `## Title {.standout}` or `## {.standout}` for full-bleed inverted slides:
 ## {.standout}
 
 Write Markdown.
-Generate Beamer PDF & Reveal.js HTML.
+Generate Beamer PDF & Marp HTML.
 ```
 
 #### 3. Multi-Column Layouts
@@ -143,6 +151,9 @@ Or with animation scenario:
 ```markdown
 ![](diagrams/order-process.bpmn){scenario="scenarios/happy-path.toml"}
 ```
+Animated BPMN diagrams are rendered as animated WebP images in Marp HTML. Beamer PDF
+uses the middle frame of the same token simulation as its static representation.
+When fast mode is enabled (via CLI `--fast`, `make fast`, frontmatter `fast: true`, or per-diagram `fast="true"`), static SVG/PDF images are rendered directly without generating animations.
 Or write inline BPMN XML blocks:
 ````markdown
 ```bpmn
@@ -157,7 +168,7 @@ Or write inline BPMN XML blocks:
 ```markdown
 ![](media/demo.mp4)
 ```
-- In **Reveal.js HTML**: Renders a native `<video>` player with autoplay/controls.
+- In **Marp HTML**: Renders a native `<video>` player with autoplay/controls.
 - In **Beamer PDF**: Extracts a poster snapshot using `ffmpeg` and links to the media.
 
 #### 6. Code Syntax Highlighting
@@ -176,7 +187,7 @@ Or write inline BPMN XML blocks:
 Remember to mention the fallback plan.
 :::
 ```
-Reveal.js shows these in the speaker view (press `S`); Beamer turns them into
+Marp keeps these available as speaker notes; Beamer turns them into
 `\note{}`. The outline editor exposes them as each item's **Notes** field.
 
 ---
@@ -193,7 +204,7 @@ Reveal.js shows these in the speaker view (press `S`); Beamer turns them into
 ├── CLAUDE.md                       # Claude Code guidance
 ├── pandoc/
 │   ├── beamer-metropolis.latex     # Pandoc Beamer Metropolis template
-│   ├── metropolis.css              # Reveal.js theme matching Metropolis palette
+│   ├── metropolis-marp.css         # Marp theme matching Metropolis palette
 │   └── slides.lua                  # Lua filter for BPMN, SVG, video & standouts
 ├── outline/
 │   └── outline-editor.ts           # Interactive terminal outline editor

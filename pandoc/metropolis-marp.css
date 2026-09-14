@@ -1,0 +1,268 @@
+/* @theme metropolis */
+/* @auto-scaling false */
+
+@import 'default';
+
+:root {
+  --primary: #002957;
+  --accent: #F1563F;
+  --ink: #23373B;
+  --paper: #FAFAFA;
+  --muted: #667277;
+}
+
+section {
+  box-sizing: border-box;
+  position: relative;
+  padding: 64px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Fira Sans', 'Liberation Sans', Arial, sans-serif;
+  font-size: var(--slide-base-font-size, 30px);
+  line-height: 1.35;
+  justify-content: flex-start;
+}
+
+section > h1:first-child,
+section > h2:first-child {
+  margin-top: 0;
+}
+
+section:not(.title-slide):not(:has(.standout)) {
+  display: flex;
+  flex-direction: column;
+  padding: 64px;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+section:not(.title-slide) > h1:first-child,
+section:not(.title-slide) > h2:first-child {
+  position: static;
+  margin: 0 0 1em;
+}
+
+section:not(.title-slide) > h2:first-child + :not(.notes) {
+  margin-top: 0;
+}
+
+/* Section dividers are focused, centered pages rather than content slides. */
+section:not(.title-slide):has(> h1:first-child) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 64px;
+  text-align: center;
+}
+
+section:not(.title-slide):has(> h1:first-child) > h1:first-child {
+  position: static;
+  width: 100%;
+  margin: 0;
+  color: #FFFFFF;
+  font-size: 2.35em;
+}
+
+/* Slides whose only body content is an image or diagram are centered too. */
+section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video)):not(:has(> :not(h2):not(img):not(video):not(.notes))) {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video)):not(:has(> :not(h2):not(img):not(video):not(.notes))) > h2:first-child + :is(img, video) {
+  position: static !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  margin: auto auto auto 0 !important;
+}
+
+section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)):has(> :is(img, video)):not(:has(> :not(img):not(video):not(.notes))) {
+  padding: 64px;
+}
+
+section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)):has(> :is(img, video)):not(:has(> :not(img):not(video):not(.notes))) > :is(img, video) {
+  position: static !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  margin: auto auto auto 0 !important;
+}
+
+section .notes {
+  display: none !important;
+}
+
+section::after {
+  color: var(--muted);
+  font-family: 'Fira Code', monospace;
+  font-size: 16px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--primary);
+  font-family: 'Fira Sans', 'Liberation Sans', Arial, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 2.35em;
+  line-height: 1.08;
+}
+
+h2 {
+  position: relative;
+  padding-bottom: 0.3em;
+  border-bottom: 4px solid var(--accent);
+  font-size: 1.6em;
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: 1.3em;
+}
+
+a {
+  color: var(--accent);
+}
+
+strong {
+  color: var(--primary);
+}
+
+code {
+  color: #D43822;
+  font-family: 'Fira Code', monospace;
+}
+
+pre {
+  border-radius: 0;
+  font-size: 0.72em;
+  margin-top: 0.8em;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+pre code {
+  color: inherit;
+  overflow-wrap: anywhere;
+  white-space: inherit;
+}
+
+blockquote {
+  border-left: 4px solid var(--accent);
+  color: var(--ink);
+}
+
+img,
+video {
+  box-sizing: border-box;
+  display: block;
+  width: auto;
+  min-width: 0;
+  max-width: 100% !important;
+  max-height: 62%;
+  height: auto;
+  margin: 0.5em auto;
+  object-fit: contain;
+}
+
+video {
+  background: #000000;
+}
+
+.columns {
+  display: flex;
+  gap: 2em;
+  align-items: flex-start;
+}
+
+.column {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Use the primary palette for title and section pages. */
+section.title-slide,
+section:has(> h1:first-child) {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+section.title-slide h1,
+section.title-slide h2,
+section.title-slide h3,
+section.title-slide strong,
+section:has(> h1:first-child) h1,
+section:has(> h1:first-child) h2,
+section:has(> h1:first-child) h3,
+section:has(> h1:first-child) strong {
+  color: #FFFFFF;
+}
+
+section.title-slide > h1:first-child,
+section:has(> h1:first-child) > h1:first-child {
+  border-bottom: 4px solid var(--accent);
+  padding-bottom: 0.25em;
+}
+
+section:has(> h1:first-child)::after {
+  background: var(--accent);
+  bottom: 40px;
+  content: '';
+  height: 2px;
+  left: 64px;
+  position: absolute;
+  right: 64px;
+}
+
+section.title-slide h1 {
+  font-size: 1.9em;
+  font-weight: 700;
+}
+
+section.title-slide > p:first-of-type {
+  margin-bottom: 0;
+}
+
+section.title-slide > p:first-of-type + p {
+  margin-top: 60px;
+}
+
+section.title-slide {
+  justify-content: flex-start;
+  padding-top: 150px;
+}
+
+section:first-of-type p {
+  margin: 0.55em 0;
+}
+
+section:has(.standout) {
+  background: var(--primary);
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+section:has(.standout) > h1:first-child,
+section:has(.standout) > h2:first-child {
+  position: static;
+}
+
+section:has(.standout) h1,
+section:has(.standout) h2,
+section:has(.standout) h3,
+section:has(.standout) p,
+section:has(.standout) li {
+  color: #FFFFFF;
+}

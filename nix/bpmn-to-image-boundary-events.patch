@@ -1,0 +1,36 @@
+--- a/src/token-simulation/simulate.ts
++++ b/src/token-simulation/simulate.ts
+@@ -137,17 +137,24 @@
+     eventBus.on('tokenSimulation.simulator.trace', ({ action, element, scope }: any) => {
+-      if (action !== 'enter' || !element || !GATEWAY_TYPES.has(element.type)) return;
++      if (action !== 'enter' || !element) return;
+       const tokenName = scope && this.tokenNameByScope.get(scope);
+       if (!tokenName) return;
+ 
+-      const entry = this.findPendingStep(tokenName, element.id);
+-      if (!entry || entry.step.take === undefined) return;
+-
+-      const ids = Array.isArray(entry.step.take) ? entry.step.take : [entry.step.take];
+-      const flows = ids.map((id) => elementRegistry.get(id));
+-      simulator.setConfig(element, {
+-        activeOutgoing: Array.isArray(entry.step.take) ? flows : flows[0],
+-      });
+-      entry.consumed = true;
++      if (GATEWAY_TYPES.has(element.type)) {
++        const entry = this.findPendingStep(tokenName, element.id);
++        if (!entry || entry.step.take === undefined) return;
++
++        const ids = Array.isArray(entry.step.take) ? entry.step.take : [entry.step.take];
++        const flows = ids.map((id) => elementRegistry.get(id));
++        simulator.setConfig(element, {
++          activeOutgoing: Array.isArray(entry.step.take) ? flows : flows[0],
++        });
++        entry.consumed = true;
++      } else if (element.attachers && element.attachers.length > 0) {
++        const hasBoundaryStep = element.attachers.some((attacher: any) =>
++          this.findPendingStep(tokenName, attacher.id)
++        );
++        simulator.setConfig(element, { wait: hasBoundaryStep });
++      }
+     });
+   }

@@ -1,0 +1,38 @@
+# Token-simulation scenario covering all execution paths of data-analysis.bpmn:
+# 1. successful-analysis: Full path through deployment subprocess, ragging
+#    subprocess, parallel report generation, report handout, and compensation.
+# 2. provisioning-timeout: Interrupted by deployment timeout boundary event,
+#    routed through teardown resources to cancellation.
+# 3. provisioning-error: Interrupted by deployment error boundary event,
+#    routed through teardown resources to cancellation.
+
+fps = 12
+
+[[token]]
+name = "successful-analysis"
+
+  [[token.step]]
+  element = "Event_1pdvznn" # Batch requested
+  at_ms = 0
+
+[[token]]
+name = "provisioning-timeout"
+
+  [[token.step]]
+  element = "Event_1pdvznn" # Batch requested
+  at_ms = 12000
+
+  [[token.step]]
+  element = "Event_072b3gr" # Deployment timeout
+  at_ms = 13500
+
+[[token]]
+name = "provisioning-error"
+
+  [[token.step]]
+  element = "Event_1pdvznn" # Batch requested
+  at_ms = 15000
+
+  [[token.step]]
+  element = "Event_04yna0z" # Error
+  at_ms = 16500

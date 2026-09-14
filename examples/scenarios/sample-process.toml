@@ -1,0 +1,9 @@
+# Token-simulation scenario, generated from sample-process.bpmn.
+fps = 12
+
+[[token]]
+name = "token-1"
+
+  [[token.step]]
+  element = "StartEvent_1"
+  at_ms = 0
