@@ -121,7 +121,7 @@ outcome. Use the next diagram to introduce the notation from left to right.
 ## Activities
 
 - Activities are units of work
-- Manual tasks, forms, scripts, queues, decisions, ...
+- User Tasks, Script Tasks, Service Tasks, ...
 - People, systems, or robots can perform them
 - Sequence flows connect the work
 
@@ -137,9 +137,9 @@ contrasts user, script, and service tasks.
 ## Control Flow
 
 - Gateways steer, split or merge
-- **XOR** chooses one path
-- **AND** runs paths in parallel
-- **OR** activates every matching path
+- Exclusice (**XOR**) chooses one path
+- Parallel (**AND**) runs paths in parallel
+- Inclusive (**OR**) activates every matching path
 
 ::: notes
 An exclusive gateway chooses one outgoing path using a condition such as
@@ -310,8 +310,8 @@ retries or BPMN error boundaries.
 
   *** Tasks ***
   My Task in Robot
-      Log To Console    Hello ${name}!
-      VAR    Hello ${name}!  scope=${BPMN:PROCESS}
+      Log To Console       Hello ${name}!
+      VAR    ${message}    Hello ${name}!    scope=${BPMN:PROCESS}
   ```
 
 ## Purjo `pyproject.toml`
