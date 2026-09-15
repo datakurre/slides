@@ -363,7 +363,10 @@ process-variables = true
 - Build Operaton with community UI plugins
 
   ```bash
-  curl -fsSL https://raw.githubusercontent.com/datakurre/operaton-cockpit-plugins/main/Dockerfile | docker build -t operaton-with-plugins -
+  curl -fsSL https://raw.githubusercontent.com/\
+    datakurre/operaton-cockpit-plugins/main/\
+    Dockerfile \
+    | docker build -t operaton-with-plugins -
   ```
 
 - Run the built image
