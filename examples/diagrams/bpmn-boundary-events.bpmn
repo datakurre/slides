@@ -47,19 +47,13 @@
         <dc:Bounds x="356" y="122" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Retry_di" bpmnElement="Task_Retry">
-        <dc:Bounds x="452" y="240" width="100" height="80" />
+        <dc:Bounds x="460" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Retry_di" bpmnElement="End_Retry">
-        <dc:Bounds x="612" y="262" width="36" height="36" />
+        <dc:Bounds x="632" y="122" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1l0qjw0_di" bpmnElement="Event_1l0qjw0">
-        <dc:Bounds x="708" y="402" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0v187hv_di" bpmnElement="Event_0v187hv">
-        <dc:Bounds x="484" y="302" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="520" y="338" width="28" height="14" />
-        </bpmndi:BPMNLabel>
+        <dc:Bounds x="632" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Boundary_Timeout_di" bpmnElement="Boundary_Timeout">
         <dc:Bounds x="228" y="162" width="36" height="36" />
@@ -67,10 +61,18 @@
           <dc:Bounds x="264" y="198" width="46" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0v187hv_di" bpmnElement="Event_0v187hv">
+        <dc:Bounds x="492" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="530" y="198" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_Timeout_Retry_di" bpmnElement="Flow_Timeout_Retry">
         <di:waypoint x="246" y="198" />
-        <di:waypoint x="246" y="280" />
-        <di:waypoint x="452" y="280" />
+        <di:waypoint x="246" y="270" />
+        <di:waypoint x="430" y="270" />
+        <di:waypoint x="430" y="140" />
+        <di:waypoint x="460" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1a9nntp_di" bpmnElement="Flow_1a9nntp">
         <di:waypoint x="136" y="140" />
@@ -81,13 +83,13 @@
         <di:waypoint x="356" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17kvfx4_di" bpmnElement="Flow_17kvfx4">
-        <di:waypoint x="552" y="280" />
-        <di:waypoint x="612" y="280" />
+        <di:waypoint x="560" y="140" />
+        <di:waypoint x="632" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0fqqnnk_di" bpmnElement="Flow_0fqqnnk">
-        <di:waypoint x="502" y="338" />
-        <di:waypoint x="502" y="420" />
-        <di:waypoint x="708" y="420" />
+        <di:waypoint x="510" y="198" />
+        <di:waypoint x="510" y="270" />
+        <di:waypoint x="632" y="270" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

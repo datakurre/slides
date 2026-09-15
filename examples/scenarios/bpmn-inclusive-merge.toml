@@ -1,0 +1,24 @@
+# Show the inclusive gateway selecting one branch and both branches.
+fps = 12
+
+[[token]]
+name = "accept-only"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 0
+
+  [[token.step]]
+  element = "Split"
+  take = ["Flow_0ov532z"]
+
+[[token]]
+name = "both-outcomes"
+
+  [[token.step]]
+  element = "Start"
+  at_ms = 1800
+
+  [[token.step]]
+  element = "Split"
+  take = ["F3", "Flow_0ov532z"]

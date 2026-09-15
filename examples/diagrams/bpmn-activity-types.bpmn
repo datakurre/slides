@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_ActivityTypes" targetNamespace="http://example.com/bpmn/activity-types">
   <bpmn:process id="Process_ActivityTypes" isExecutable="true">
-    <bpmn:startEvent id="Start">
+    <bpmn:startEvent id="Start" name="Update requested">
       <bpmn:outgoing>F1</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:userTask id="UserTask" name="Approve request">
@@ -16,7 +16,7 @@
       <bpmn:incoming>F3</bpmn:incoming>
       <bpmn:outgoing>F4</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="End">
+    <bpmn:endEvent id="End" name="Update done">
       <bpmn:incoming>F4</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="UserTask" />
@@ -28,6 +28,9 @@
     <bpmndi:BPMNPlane id="BPMNPlane_Process_ActivityTypes" bpmnElement="Process_ActivityTypes">
       <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
         <dc:Bounds x="62" y="52" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="36" y="95" width="88" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_di" bpmnElement="UserTask">
         <dc:Bounds x="148" y="30" width="100" height="80" />
@@ -40,6 +43,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_di" bpmnElement="End">
         <dc:Bounds x="598" y="52" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="95" width="63" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1">
         <di:waypoint x="98" y="70" />
