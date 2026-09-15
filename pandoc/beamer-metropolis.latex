@@ -72,17 +72,25 @@ $endfor$
 % area while keeping the aspect ratio, and center standalone image blocks.
 \makeatletter
 \newsavebox\pandoc@box
+\newdimen\pandoc@imageheight
+\newdimen\pandoc@verticalspace
 \newcommand*\pandocbounded[1]{%
-  \par\vspace*{\fill}%
+  \par%
   \sbox\pandoc@box{#1}%
-  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  % Leave room for the frame title and bottom margin inside the content area.
+  \Gscale@div\@tempa{0.9\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
   \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
   \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi%
+  \pandoc@imageheight=\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax%
+  \ifdim\@tempa\p@<\p@\pandoc@imageheight=\@tempa\pandoc@imageheight\fi%
+  \pandoc@verticalspace=\dimexpr 0.9\textheight-\pandoc@imageheight\relax%
+  \ifdim\pandoc@verticalspace<0pt\pandoc@verticalspace=0pt\fi%
+  \vspace*{0.5\pandoc@verticalspace}%
   \makebox[\linewidth][c]{%
     \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
     \else\usebox\pandoc@box%
     \fi}%
-  \vspace*{\fill}\par%
+  \par\vspace*{0.5\pandoc@verticalspace}%
 }
 \makeatother
 \providecommand{\passthrough}[1]{#1}

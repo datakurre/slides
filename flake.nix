@@ -78,9 +78,7 @@
         '';
 
         # BPMN renderer
-        bpmnRenderer = (bpmn-to-image.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
-          patches = (old.patches or [ ]) ++ [ ./nix/bpmn-to-image-boundary-events.patch ];
-        }));
+        bpmnRenderer = bpmn-to-image.packages.${pkgs.stdenv.hostPlatform.system}.default;
         bpmn = bpmn-auto-layout.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
         # Slides CLI application
@@ -110,6 +108,8 @@
               echo "  --marp         Build Marp HTML presentation (<deck.html>)" >&2
               echo "  --all          Build PDF and Marp HTML (default)" >&2
               echo "  --fast         Fast compilation mode (images instead of animations for BPMN)" >&2
+              echo "  --quick        Quick animated mode (low-FPS BPMN videos)" >&2
+              echo "  --no-cache     Ignore the render cache and regenerate all diagrams/animations" >&2
               echo "  --watch        Rebuild automatically whenever the markdown file changes" >&2
               echo "  --serve [port] Start a local HTTP server and live rebuild on changes (default port: 8000)" >&2
               echo "  -h, --help     Show this help message" >&2
@@ -119,6 +119,8 @@
             build_pdf=0
             build_marp=0
             fast_mode=0
+            quick_mode=0
+            no_cache=0
             watch_mode=0
             serve_mode=0
             serve_port=8000
@@ -141,6 +143,14 @@
                   ;;
                 --fast)
                   fast_mode=1
+                  shift
+                  ;;
+                --quick)
+                  quick_mode=1
+                  shift
+                  ;;
+                --no-cache)
+                  no_cache=1
                   shift
                   ;;
                 --watch)
@@ -173,6 +183,12 @@
             if [ -n "''${SLIDES_FAST:-}" ] && [ "$SLIDES_FAST" != "0" ] && [ "$SLIDES_FAST" != "false" ]; then
               fast_mode=1
             fi
+            if [ -n "''${SLIDES_QUICK:-}" ] && [ "$SLIDES_QUICK" != "0" ] && [ "$SLIDES_QUICK" != "false" ]; then
+              quick_mode=1
+            fi
+            if [ -n "''${SLIDES_NO_CACHE:-}" ] && [ "$SLIDES_NO_CACHE" != "0" ] && [ "$SLIDES_NO_CACHE" != "false" ]; then
+              no_cache=1
+            fi
 
             if [ "''${#args[@]}" -ne 1 ] || [ "''${args[0]##*.}" != "md" ]; then
               usage 2
@@ -200,6 +216,8 @@
               [ "$build_pdf" -eq 1 ] && build_flags+=(--pdf)
               [ "$build_marp" -eq 1 ] && build_flags+=(--marp)
               [ "$fast_mode" -eq 1 ] && build_flags+=(--fast)
+              [ "$quick_mode" -eq 1 ] && build_flags+=(--quick)
+              [ "$no_cache" -eq 1 ] && build_flags+=(--no-cache)
               status=0
               printf '%s\n' "$input" | entr -n "$0" "''${build_flags[@]}" "$input" || status=$?
               exit "$status"
@@ -210,6 +228,8 @@
               echo "Starting preview server on http://localhost:$serve_port" >&2
               serve_flags=(--marp)
               [ "$fast_mode" -eq 1 ] && serve_flags+=(--fast)
+              [ "$quick_mode" -eq 1 ] && serve_flags+=(--quick)
+              [ "$no_cache" -eq 1 ] && serve_flags+=(--no-cache)
               # Initial build
               "$0" "''${serve_flags[@]}" "$input"
               
@@ -237,6 +257,12 @@
             if [ "$fast_mode" -eq 1 ]; then
               export SLIDES_FAST=1
               pandoc_flags+=(-M fast=true)
+            fi
+            if [ "$quick_mode" -eq 1 ] && [ "$fast_mode" -eq 0 ]; then
+              export SLIDES_QUICK=1
+            fi
+            if [ "$no_cache" -eq 1 ]; then
+              export SLIDES_NO_CACHE=1
             fi
 
             cd "$dir"

@@ -71,14 +71,17 @@ retries, and failures difficult to inspect. BPMN supplies that missing control p
 
 ## Agenda
 
-- BPMN as the control plane
-- Operaton, Purjo, and Robot Framework
-- Build, test, model, and operate
+- BPMN 2.0: model executable processes
+- Operaton: run the process and queue the work
+- Robot Worker: execute Robot Tasks with Purjo
+- Hello World: build and run a task package
+- Testing orchestrated automation end to end
+- Wrap-up: resources and next steps
 
 ::: notes
-The detailed route is: BPMN 2.0 primer; Operaton and external service tasks;
-Robot Framework through Purjo; a Hello World walkthrough and testing; then
-in-editor modeling tools and live operations.
+Use the agenda to set expectations: first the BPMN notation, then the engine and
+worker architecture, followed by a runnable Purjo example and three testing
+levels. Close with resources and practical next steps.
 :::
 
 ---
@@ -112,7 +115,8 @@ outcome. Use the next diagram to introduce the notation from left to right.
 
 ## Sequence Flow Example
 
-![](examples/diagrams/bpmn-sequence-flow.bpmn){animated="true" scenario="examples/scenarios/bpmn-sequence-flow.toml"}
+![](examples/diagrams/bpmn-sequence-flow.bpmn){height="33%" align="center" animated="true" scenario="examples/scenarios/bpmn-sequence-flow.toml"}
+
 
 ## Activities
 
@@ -128,7 +132,7 @@ contrasts user, script, and service tasks.
 
 ## Activities Example
 
-![](examples/diagrams/bpmn-activity-types.bpmn){animated="true" scenario="examples/scenarios/bpmn-activity-types.toml"}
+![](examples/diagrams/bpmn-activity-types.bpmn){height="40%" align="center" animated="true" scenario="examples/scenarios/bpmn-activity-types.toml"}
 
 ## Control Flow
 
@@ -236,9 +240,9 @@ which is firewall-friendly and works on laptops, bare metal, or containers.
 
 ---
 
-# Robot Task Worker {.section-slide}
+# Robot Worker {.section-slide}
 
-## Robots as Service Tasks
+## Robot Tasks as Service Tasks
 
 - BPMN service tasks map to Robot tasks
 - Operaton owns state; robots execute
@@ -249,6 +253,16 @@ which is firewall-friendly and works on laptops, bare metal, or containers.
 In BPMN 2.0, a Service Task is an automated unit of work executed by software.
 Operaton uses the External Service Task pattern: it never calls workers directly;
 independent Robot Framework workers pull work on demand.
+:::
+
+## Service Task in Context
+
+![](examples/diagrams/bpmn-activity-types-robot.bpmn){animated="true" scenario="examples/scenarios/bpmn-activity-types-robot.toml"}
+
+::: notes
+Return to the activity sequence: the user task and script task stay in the
+process, while the service task becomes work for a Robot Framework worker.
+This is the handoff that the topic queue and Purjo configuration implement next.
 :::
 
 ## Service Tasks as Queues
@@ -285,16 +299,37 @@ retries or BPMN error boundaries.
 - Topic mappings live in `pyproject.toml`
 - Injects variables and secrets; adds return scope
 
+## Purjo `hello.robot`
+
+- Purjo tasks are vanilla `.robot`:
+
+  ```robotframework
+  *** Variables ***
+  ${BPMN:PROCESS}     local
+  ${name}             n/a
+
+  *** Tasks ***
+  My Task in Robot
+      Log To Console    Hello ${name}!
+      VAR    Hello ${name}!  scope=${BPMN:PROCESS}
+  ```
+
 ## Purjo `pyproject.toml`
 
 ```toml
 [project]
-...
+dependencies = [
+    "robotframework>=7.2.2",
+]
+
+[dependency-groups]
+dev = [
+    "robotframework-robotlibrary>=1.0a3",
+]
 
 [tool.purjo.topics."My Topic in BPMN"]
 name = "My Task in Robot"
 process-variables = true
-on-fail = "ERROR"
 ```
 
 ## Implicit Process Variable Mapping
@@ -302,37 +337,22 @@ on-fail = "ERROR"
 - Process variables arrive as Robot variables
 - File variables arrive as absolute paths
 - No unpacking or adapter code, just Robot
-- Example: `${name}`
 
-::: notes
-Purjo injects Operaton process variables directly into Robot Framework. An
-Operaton variable named `name` is available as `${name}` in the task.
-:::
+  ```robotframework
+  *** Variables ***
+  ${name}               ${EMPTY}
+
+  *** Tasks ***
+  My Task in Robot
+      Log to Console    Hello    ${name}
+  ```
 
 ## Returning Variables to the Process
 
 - Purjo patches Robot with var scope `BPMN:PROCESS`
 - Promote variables to the BPMN process scope
 - Operaton receives them when the task completes
-- Supports vanilla Robot Framework with `${BPMN:PROCESS}` indirection
-
-::: notes
-Standard Robot VAR scopes only exist within the local runner. Purjo adds
-`scope=BPMN:PROCESS`, so output variables are captured and returned to Operaton.
-:::
-
-## Purjo `hello.robot`
-
-```robotframework
-*** Variables ***
-${BPMN:PROCESS}     local
-${name}             n/a
-
-*** Tasks ***
-My Task in Robot
-    Log To Console    Hello ${name}!
-    VAR    Hello ${name}!  scope=${BPMN:PROCESS}
-```
+- Vanilla Robot Framework with `${BPMN:PROCESS}` indirection
 
 ---
 
@@ -340,7 +360,7 @@ My Task in Robot
 
 ## Running Operaton with Podman
 
-- Build Operaton with commmunity UI plugins
+- Build Operaton with community UI plugins
 
   ```bash
   curl -fsSL https://raw.githubusercontent.com/datakurre/operaton-cockpit-plugins/main/Dockerfile | docker build -t operaton-with-plugins -
@@ -352,17 +372,12 @@ My Task in Robot
   docker run --rm -p 8080:8080 operaton-with-plugins
   ```
 
-- Username: `demo`, password: `demo`
-
-::: notes
-The Dockerfile is built directly from GitHub. The demo credentials are `demo` /
-`demo`. The container exposes the Web Cockpit and engine REST API on port 8080.
-:::
+- Operaton UI credentials: `demo` / `demo`
 
 
 ## Creating a Purjo Task Package
 
-- Scaffold the process, task, and project configuration
+- Scaffold the task, project configuration and example process
 
   ```bash
   mkdir hello-world
@@ -377,59 +392,56 @@ The Dockerfile is built directly from GitHub. The demo credentials are `demo` /
   uv run --with=purjo -- pur run hello.bpmn
   ```
 
-::: notes
-`pur run` deploys `hello.bpmn` through the REST API, creates a process instance,
-and returns a direct Cockpit URL. The instance waits at the external task topic.
-:::
-
-
 ## Serving a Purjo Task Package
 
-- Poll for the configured topic
-- Run `hello.robot` using `uv` in a temporary directory
-- Return the logs and results to Operaton
+- Poll for the configured topics for tasks
+- Run tasks using `uv` in a temporary directory
+- Return the logs and results to process
 
   ```bash
   uv run --with=purjo -- pur serve .
   ```
 
-::: notes
-`pur serve` polls Operaton, locks matching tasks, runs `hello.robot` through `uv`,
-logs output, and submits the result so the workflow can continue.
-:::
+---
+
+# Demo {.section-slide}
 
 ---
 
-# Testing Orchestrated Automation {.section-slide}
+# Testing {.section-slide}
 
 ## E2E Testing with the `purjo` Library
 
-```robotframework
-*** Settings ***
-Library    Purjo
-Library    Collections
+* Acceptance tests requires running process engine:
 
-*** Test Cases ***
-Test Topic Execution
-    &{inputs}=         Create Dictionary         name=Alice
-    &{outputs}=        Get Output Variables      path=.
-    ...                topic=My Topic in BPMN    variables=${inputs}
-    Should Be Equal    ${outputs}[greeting]      Hello Alice!
-```
+  ```robotframework
+  *** Settings ***
+  Library    purjo
+  Library    Collections
+
+  *** Test Cases ***
+  Test Topic Execution
+      &{inputs}=         Create Dictionary         name=Alice
+      &{outputs}=        Get Output Variables      path=.
+      ...                topic=My Topic in BPMN    variables=${inputs}
+      Should Be Equal    ${outputs}[greeting]      Hello Alice!
+  ```
 
 ## Testing Task with `RobotLibrary`
 
-```robotframework
-*** Settings ***
-Library    RobotLibrary
+* `RobotLibrary` executes just `.robot`:
 
-*** Test Cases ***
-Test Hello Task
-    Run Robot Task     hello.robot    My Task in Robot
-    ...                BPMN:PROCESS=global
-    ...                name=John Doe
-    Should Be Equal    ${greeting}    Hello John Doe!
-```
+  ```robotframework
+  *** Settings ***
+  Library    RobotLibrary
+
+  *** Test Cases ***
+  Test Hello Task
+      Run Robot Task     hello.robot    My Task in Robot
+      ...                BPMN:PROCESS=global
+      ...                name=Alice
+      Should Be Equal    ${greeting}    Hello Alice!
+  ```
 
 ## Testing BPMN with `Operaton` Library
 
@@ -444,15 +456,13 @@ Hello Process Completes External Task
     Start Instance            example-hello-world
     ${tasks}=                 Fetch And Lock    My Topic in BPMN
     ${task_id}=               Get From List     ${tasks}    0
-    Complete External Task    ${task_id}    message=Hello Alice!
+    Complete External Task    ${task_id}        message=Hello Alice!
     Should Be Ended
     [Teardown]                Teardown Process Engine
 ```
 
 ::: notes
 [`robotframework-operaton`](https://gitlab.com/vasara-bpm/robotframework-operaton)
-embeds Operaton with an in-memory H2 database, avoiding network overhead. The
-watch mode reruns tests when `.robot` or `.bpmn` files change.
 :::
 
 ---
@@ -466,15 +476,6 @@ watch mode reruns tests when `.robot` or `.bpmn` files change.
 - "Opinionated BPMN 2.0 (bpmn-js) Modeler"
 - [pypi.org/project/robotframework-robotlibrary](https://pypi.org/project/robotframework-robotlibrary/)
 - [github.com/datakurre/robotframework-operaton](https://github.com/datakurre/robotframework-operaton)
-
-::: notes
-- [Opinionated BPMN Modeler](https://marketplace.visualstudio.com/items?itemName=datakurre.vscode-operaton-bpmn-js-modeler) (VSCode)
-
-The VS Code modeler keeps `.bpmn` models and `.robot` suites together, with token
-simulation and linting while editing. RobotCode adds language-server support,
-debugging, and test execution. `bpmn-autolayout` and `bpmn-to-image` automate
-diagram layout and SVG/PDF rendering for CI.
-:::
 
 ## Summary
 

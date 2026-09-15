@@ -72,11 +72,14 @@ section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video)):not
 }
 
 section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video)):not(:has(> :not(h2):not(img):not(video):not(.notes))) > h2:first-child + :is(img, video) {
+  flex: 1 1 auto;
+  min-height: 0;
   position: static !important;
   max-width: 100% !important;
   max-height: 100% !important;
   object-fit: contain !important;
-  margin: auto auto auto 0 !important;
+  object-position: left center !important;
+  margin: auto auto auto 0;
 }
 
 section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)):has(> :is(img, video)):not(:has(> :not(img):not(video):not(.notes))) {
@@ -84,11 +87,14 @@ section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)
 }
 
 section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)):has(> :is(img, video)):not(:has(> :not(img):not(video):not(.notes))) > :is(img, video) {
+  flex: 1 1 auto;
+  min-height: 0;
   position: static !important;
   max-width: 100% !important;
   max-height: 100% !important;
   object-fit: contain !important;
-  margin: auto auto auto 0 !important;
+  object-position: left center !important;
+  margin: auto auto auto 0;
 }
 
 section .notes {
@@ -129,7 +135,7 @@ h3 {
 }
 
 a {
-  color: var(--accent);
+  color: var(--primary);
 }
 
 strong {
@@ -182,11 +188,75 @@ video {
   display: flex;
   gap: 2em;
   align-items: flex-start;
+  min-height: 0;
 }
 
 .column {
+  display: flex;
+  flex-direction: column;
   flex: 1 1 0;
   min-width: 0;
+  min-height: 0;
+}
+
+.column > :is(img, video) {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain;
+  object-position: left center;
+  margin: auto auto auto 0;
+}
+
+section > p:has(> :is(img, video)),
+section > p:has(> a > :is(img, video)),
+.column > p:has(> :is(img, video)),
+.column > p:has(> a > :is(img, video)) {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+section > p > :is(img, video),
+section > p > a > :is(img, video),
+.column > p > :is(img, video),
+.column > p > a > :is(img, video) {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain;
+  object-position: left center;
+  margin: auto auto auto 0;
+}
+
+/* Explicit media widths should not be expanded by the flex layout. */
+img[style*="width:"],
+img[style*="height:"],
+video[style*="width:"],
+video[style*="height:"] {
+  flex: 0 1 auto !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+section img.align-left,
+section video.align-left {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+section img.align-center,
+section video.align-center {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+section img.align-right,
+section video.align-right {
+  margin-left: auto !important;
+  margin-right: 0 !important;
 }
 
 /* Use the primary palette for title and section pages. */

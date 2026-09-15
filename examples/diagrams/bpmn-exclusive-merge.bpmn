@@ -17,7 +17,7 @@
       <bpmn:incoming>F3</bpmn:incoming>
       <bpmn:outgoing>F5</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:exclusiveGateway id="Merge">
+    <bpmn:exclusiveGateway id="Merge" name="Merge">
       <bpmn:incoming>F4</bpmn:incoming>
       <bpmn:incoming>F5</bpmn:incoming>
       <bpmn:outgoing>F6</bpmn:outgoing>
@@ -50,6 +50,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Merge_di" bpmnElement="Merge" isMarkerVisible="true">
         <dc:Bounds x="395" y="45" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="404" y="23" width="32" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_di" bpmnElement="End">
         <dc:Bounds x="495" y="52" width="36" height="36" />

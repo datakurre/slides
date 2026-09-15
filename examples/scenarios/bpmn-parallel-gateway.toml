@@ -1,25 +1,9 @@
 fps = 12
 
+# One process instance reaches the parallel split and produces both branches.
+
 [[token]]
-name = "parallel-one"
+name = "parallel-process"
   [[token.step]]
   element = "Start"
   at_ms = 0
-
-[[token]]
-name = "parallel-two"
-  [[token.step]]
-  element = "Start"
-  at_ms = 1000
-
-[[token]]
-name = "parallel-three"
-  [[token.step]]
-  element = "Start"
-  at_ms = 2000
-
-[[token]]
-name = "parallel-four"
-  [[token.step]]
-  element = "Start"
-  at_ms = 3000

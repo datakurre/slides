@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_ActivityTypesRobot" targetNamespace="http://example.com/bpmn/activity-types-robot">
+  <bpmn:process id="Process_ActivityTypesRobot" isExecutable="true">
+    <bpmn:startEvent id="Start">
+      <bpmn:outgoing>F1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="UserTask" name="Approve request">
+      <bpmn:incoming>F1</bpmn:incoming>
+      <bpmn:outgoing>F2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="ScriptTask" name="Normalize data">
+      <bpmn:incoming>F2</bpmn:incoming>
+      <bpmn:outgoing>F3</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Robot_ServiceTask" name="Update system" camunda:type="external" camunda:topic="robot.update">
+      <bpmn:incoming>F3</bpmn:incoming>
+      <bpmn:outgoing>F4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End">
+      <bpmn:incoming>F4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="UserTask" />
+    <bpmn:sequenceFlow id="F2" sourceRef="UserTask" targetRef="ScriptTask" />
+    <bpmn:sequenceFlow id="F3" sourceRef="ScriptTask" targetRef="Robot_ServiceTask" />
+    <bpmn:sequenceFlow id="F4" sourceRef="Robot_ServiceTask" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process_ActivityTypesRobot">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_ActivityTypesRobot" bpmnElement="Process_ActivityTypesRobot">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="62" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_di" bpmnElement="UserTask">
+        <dc:Bounds x="148" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_di" bpmnElement="ScriptTask">
+        <dc:Bounds x="298" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Robot_ServiceTask_di" bpmnElement="Robot_ServiceTask">
+        <dc:Bounds x="448" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="598" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1">
+        <di:waypoint x="98" y="70" />
+        <di:waypoint x="148" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F2_di" bpmnElement="F2">
+        <di:waypoint x="248" y="70" />
+        <di:waypoint x="298" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F3_di" bpmnElement="F3">
+        <di:waypoint x="398" y="70" />
+        <di:waypoint x="448" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F4_di" bpmnElement="F4">
+        <di:waypoint x="548" y="70" />
+        <di:waypoint x="598" y="70" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

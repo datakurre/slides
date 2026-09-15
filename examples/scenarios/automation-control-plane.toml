@@ -11,6 +11,9 @@ name = "approved-one"
   [[token.step]]
   element = "Decision"
   take = "Flow_1lkh9ly"
+  [[token.step]]
+  element = "robot_run"
+  pause_ms = 500
 
 [[token]]
 name = "rejected-one"
@@ -22,6 +25,9 @@ name = "rejected-one"
   [[token.step]]
   element = "Decision"
   take = "F4"
+  [[token.step]]
+  element = "robot_notify"
+  pause_ms = 500
 
 [[token]]
 name = "approved-two"
@@ -33,6 +39,9 @@ name = "approved-two"
   [[token.step]]
   element = "Decision"
   take = "Flow_1lkh9ly"
+  [[token.step]]
+  element = "robot_run"
+  pause_ms = 500
 
 [[token]]
 name = "rejected-two"
@@ -44,3 +53,6 @@ name = "rejected-two"
   [[token.step]]
   element = "Decision"
   take = "F4"
+  [[token.step]]
+  element = "robot_notify"
+  pause_ms = 500

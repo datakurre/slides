@@ -11,25 +11,25 @@
       <bpmn:startEvent id="Event_00lj5td">
         <bpmn:outgoing>Flow_1mumn5n</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:sequenceFlow id="Flow_1mumn5n" sourceRef="Event_00lj5td" targetRef="Robot_1fdhhwd" />
-      <bpmn:sequenceFlow id="Flow_1axwdyb" sourceRef="Robot_1fdhhwd" targetRef="Robot_0hewvi7" />
+      <bpmn:sequenceFlow id="Flow_1mumn5n" sourceRef="Event_00lj5td" targetRef="Task_PlanResources" />
+      <bpmn:sequenceFlow id="Flow_1axwdyb" sourceRef="Task_PlanResources" targetRef="Task_DeployResources" />
       <bpmn:endEvent id="Event_0q7v4hf">
         <bpmn:incoming>Flow_1xrb116</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_1xrb116" sourceRef="Robot_0hewvi7" targetRef="Event_0q7v4hf" />
-      <bpmn:boundaryEvent id="Event_1d08p6n" attachedToRef="Robot_0hewvi7">
+      <bpmn:sequenceFlow id="Flow_1xrb116" sourceRef="Task_DeployResources" targetRef="Event_0q7v4hf" />
+      <bpmn:boundaryEvent id="Event_1d08p6n" attachedToRef="Task_DeployResources">
         <bpmn:compensateEventDefinition id="CompensateEventDefinition_1a0h3jn" />
       </bpmn:boundaryEvent>
-      <bpmn:serviceTask id="Robot_1fdhhwd" name="Plan required resources">
+      <bpmn:serviceTask id="Task_PlanResources" name="Plan required resources">
         <bpmn:incoming>Flow_1mumn5n</bpmn:incoming>
         <bpmn:outgoing>Flow_1axwdyb</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Robot_0hewvi7" name="Deploy resources">
+      <bpmn:serviceTask id="Task_DeployResources" name="Deploy resources">
         <bpmn:incoming>Flow_1axwdyb</bpmn:incoming>
         <bpmn:outgoing>Flow_1xrb116</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Robot_1clxzxv" name="Teardown resources" isForCompensation="true" />
-      <bpmn:association id="Association_1cg3slv" associationDirection="One" sourceRef="Event_1d08p6n" targetRef="Robot_1clxzxv" />
+      <bpmn:serviceTask id="Task_TeardownResources" name="Teardown resources" isForCompensation="true" />
+      <bpmn:sequenceFlow id="Association_1cg3slv" sourceRef="Event_1d08p6n" targetRef="Task_TeardownResources" />
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_0zndv4o" sourceRef="Event_1pdvznn" targetRef="Activity_1e4p9wv" />
     <bpmn:boundaryEvent id="Event_072b3gr" name="Deployment timeout" attachedToRef="Activity_1e4p9wv">
@@ -40,7 +40,7 @@
     <bpmn:endEvent id="Event_0y8ncau" name="Batch cancelled">
       <bpmn:incoming>Flow_181s0h2</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_181s0h2" sourceRef="Robot_1p8cxn8" targetRef="Event_0y8ncau" />
+    <bpmn:sequenceFlow id="Flow_181s0h2" sourceRef="Task_TeardownMain" targetRef="Event_0y8ncau" />
     <bpmn:subProcess id="Activity_1a2bjor" name="Ragging">
       <bpmn:incoming>Flow_0inc05g</bpmn:incoming>
       <bpmn:outgoing>Flow_1usznst</bpmn:outgoing>
@@ -48,17 +48,17 @@
       <bpmn:startEvent id="Event_0clwkg6">
         <bpmn:outgoing>Flow_1ht0cct</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:sequenceFlow id="Flow_1ht0cct" sourceRef="Event_0clwkg6" targetRef="Robot_0sb1p6x" />
-      <bpmn:sequenceFlow id="Flow_0cb9pt2" sourceRef="Robot_0sb1p6x" targetRef="Robot_0rdues8" />
+      <bpmn:sequenceFlow id="Flow_1ht0cct" sourceRef="Event_0clwkg6" targetRef="Task_FetchDocument" />
+      <bpmn:sequenceFlow id="Flow_0cb9pt2" sourceRef="Task_FetchDocument" targetRef="Task_IndexDocument" />
       <bpmn:endEvent id="Event_0yc7dk6">
         <bpmn:incoming>Flow_1m5qq8h</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_1m5qq8h" sourceRef="Robot_0rdues8" targetRef="Event_0yc7dk6" />
-      <bpmn:serviceTask id="Robot_0sb1p6x" name="Fetch document">
+      <bpmn:sequenceFlow id="Flow_1m5qq8h" sourceRef="Task_IndexDocument" targetRef="Event_0yc7dk6" />
+      <bpmn:serviceTask id="Task_FetchDocument" name="Fetch document">
         <bpmn:incoming>Flow_1ht0cct</bpmn:incoming>
         <bpmn:outgoing>Flow_0cb9pt2</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Robot_0rdues8" name="Index document">
+      <bpmn:serviceTask id="Task_IndexDocument" name="Index document">
         <bpmn:incoming>Flow_0cb9pt2</bpmn:incoming>
         <bpmn:outgoing>Flow_1m5qq8h</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -69,10 +69,10 @@
       <bpmn:outgoing>Flow_0lmpl3l</bpmn:outgoing>
       <bpmn:outgoing>Flow_1g1ddxj</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:sequenceFlow id="Flow_0lmpl3l" sourceRef="Gateway_0sewsbf" targetRef="Robot_1mza476" />
-    <bpmn:sequenceFlow id="Flow_1g1ddxj" sourceRef="Gateway_0sewsbf" targetRef="Robot_0lrfkz2" />
-    <bpmn:sequenceFlow id="Flow_0ekc7vi" sourceRef="Robot_1mza476" targetRef="Gateway_14bpb2s" />
-    <bpmn:sequenceFlow id="Flow_0ht275p" sourceRef="Robot_0lrfkz2" targetRef="Gateway_14bpb2s" />
+    <bpmn:sequenceFlow id="Flow_0lmpl3l" sourceRef="Gateway_0sewsbf" targetRef="Task_GenerateReportA" />
+    <bpmn:sequenceFlow id="Flow_1g1ddxj" sourceRef="Gateway_0sewsbf" targetRef="Task_GenerateReportB" />
+    <bpmn:sequenceFlow id="Flow_0ekc7vi" sourceRef="Task_GenerateReportA" targetRef="Gateway_14bpb2s" />
+    <bpmn:sequenceFlow id="Flow_0ht275p" sourceRef="Task_GenerateReportB" targetRef="Gateway_14bpb2s" />
     <bpmn:sequenceFlow id="Flow_078gfdu" sourceRef="Gateway_14bpb2s" targetRef="Gateway_19k7wwi" />
     <bpmn:userTask id="Activity_1b03365" name="Report handout">
       <bpmn:incoming>Flow_04p07xx</bpmn:incoming>
@@ -88,7 +88,7 @@
       <bpmn:outgoing>Flow_0ul4ea2</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1qppgly" sourceRef="Event_04yna0z" targetRef="Gateway_1nu3dg7" />
-    <bpmn:sequenceFlow id="Flow_0ul4ea2" sourceRef="Gateway_1nu3dg7" targetRef="Robot_1p8cxn8" />
+    <bpmn:sequenceFlow id="Flow_0ul4ea2" sourceRef="Gateway_1nu3dg7" targetRef="Task_TeardownMain" />
     <bpmn:sequenceFlow id="Flow_0inc05g" sourceRef="Activity_1e4p9wv" targetRef="Activity_1a2bjor" />
     <bpmn:parallelGateway id="Gateway_14bpb2s">
       <bpmn:incoming>Flow_0ekc7vi</bpmn:incoming>
@@ -109,7 +109,7 @@
     <bpmn:intermediateThrowEvent id="Event_0erh0zm">
       <bpmn:incoming>Flow_1qlkjs6</bpmn:incoming>
       <bpmn:outgoing>Flow_0z2pxyd</bpmn:outgoing>
-      <bpmn:compensateEventDefinition id="CompensateEventDefinition_1g6xgmt" />
+      <bpmn:compensateEventDefinition id="CompensateEventDefinition_1g6xgmt" activityRef="Activity_1e4p9wv" />
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_18w41al" sourceRef="Gateway_1x7lral" targetRef="Event_1ysfrn9" />
     <bpmn:parallelGateway id="Gateway_1x7lral">
@@ -118,15 +118,15 @@
       <bpmn:outgoing>Flow_18w41al</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="Flow_0z2pxyd" sourceRef="Event_0erh0zm" targetRef="Gateway_1x7lral" />
-    <bpmn:serviceTask id="Robot_1mza476" name="Generate report">
+    <bpmn:serviceTask id="Task_GenerateReportA" name="Generate report">
       <bpmn:incoming>Flow_0lmpl3l</bpmn:incoming>
       <bpmn:outgoing>Flow_0ekc7vi</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Robot_0lrfkz2" name="Generate report">
+    <bpmn:serviceTask id="Task_GenerateReportB" name="Generate report">
       <bpmn:incoming>Flow_1g1ddxj</bpmn:incoming>
       <bpmn:outgoing>Flow_0ht275p</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Robot_1p8cxn8" name="Teardown resources">
+    <bpmn:serviceTask id="Task_TeardownMain" name="Teardown resources">
       <bpmn:incoming>Flow_0ul4ea2</bpmn:incoming>
       <bpmn:outgoing>Flow_181s0h2</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -170,15 +170,15 @@
       <bpmndi:BPMNShape id="Event_1ysfrn9_di" bpmnElement="Event_1ysfrn9">
         <dc:Bounds x="1552" y="442" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0kqtqqb_di" bpmnElement="Robot_1mza476">
+      <bpmndi:BPMNShape id="Activity_0kqtqqb_di" bpmnElement="Task_GenerateReportA">
         <dc:Bounds x="901" y="420" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1r5q383_di" bpmnElement="Robot_0lrfkz2">
+      <bpmndi:BPMNShape id="Activity_1r5q383_di" bpmnElement="Task_GenerateReportB">
         <dc:Bounds x="901" y="540" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_18ju66r_di" bpmnElement="Robot_1p8cxn8">
+      <bpmndi:BPMNShape id="Activity_18ju66r_di" bpmnElement="Task_TeardownMain">
         <dc:Bounds x="901" y="213" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1e4p9wv_di" bpmnElement="Activity_1e4p9wv" isExpanded="true">
@@ -191,13 +191,13 @@
       <bpmndi:BPMNShape id="Event_0q7v4hf_di" bpmnElement="Event_0q7v4hf">
         <dc:Bounds x="642" y="77" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1j5cwze_di" bpmnElement="Robot_1fdhhwd">
+      <bpmndi:BPMNShape id="Activity_1j5cwze_di" bpmnElement="Task_PlanResources">
         <dc:Bounds x="322" y="55" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0drw85d_di" bpmnElement="Robot_0hewvi7">
+      <bpmndi:BPMNShape id="Activity_0drw85d_di" bpmnElement="Task_DeployResources">
         <dc:Bounds x="482" y="55" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0dwwh0n_di" bpmnElement="Robot_1clxzxv">
+      <bpmndi:BPMNShape id="Activity_0dwwh0n_di" bpmnElement="Task_TeardownResources">
         <dc:Bounds x="514" y="213" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1cg3slv_di" bpmnElement="Association_1cg3slv">
@@ -229,10 +229,10 @@
       <bpmndi:BPMNShape id="Event_0yc7dk6_di" bpmnElement="Event_0yc7dk6">
         <dc:Bounds x="642" y="437" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ggf2ar_di" bpmnElement="Robot_0sb1p6x">
+      <bpmndi:BPMNShape id="Activity_1ggf2ar_di" bpmnElement="Task_FetchDocument">
         <dc:Bounds x="322" y="415" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_03fql9a_di" bpmnElement="Robot_0rdues8">
+      <bpmndi:BPMNShape id="Activity_03fql9a_di" bpmnElement="Task_IndexDocument">
         <dc:Bounds x="482" y="415" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1ht0cct_di" bpmnElement="Flow_1ht0cct">

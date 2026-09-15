@@ -13,7 +13,7 @@ name = "timeout-payment-one"
   at_ms = 1500
   [[token.step]]
   element = "Boundary_Timeout"
-  at_ms = 2000
+  at_ms = 2500
 
 [[token]]
 name = "normal-payment-two"
@@ -28,7 +28,7 @@ name = "timeout-payment-two"
   at_ms = 5000
   [[token.step]]
   element = "Boundary_Timeout"
-  at_ms = 5500
+  at_ms = 6000
 
 [[token]]
 name = "error-payment-one"
@@ -37,10 +37,10 @@ name = "error-payment-one"
   at_ms = 7000
   [[token.step]]
   element = "Boundary_Timeout"
-  at_ms = 7500
+  at_ms = 8000
   [[token.step]]
   element = "Event_0v187hv"
-  at_ms = 8500
+  at_ms = 9000
 
 [[token]]
 name = "error-payment-two"
@@ -49,7 +49,7 @@ name = "error-payment-two"
   at_ms = 10000
   [[token.step]]
   element = "Boundary_Timeout"
-  at_ms = 10500
+  at_ms = 11000
   [[token.step]]
   element = "Event_0v187hv"
-  at_ms = 11500
+  at_ms = 12000
