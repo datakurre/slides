@@ -147,7 +147,7 @@ reviewed as documentation and deployed as executable process definitions.
 - Workers run anywhere and scale horizontally
 - Operaton provides a REST API with long polling
 
-![](examples/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="examples/scenarios/bpmn-activity-types-robot.toml"}
+![](examples/diagrams/bpmn-activity-types.bpmn){height="30%" align="center" animated="true" scenario="examples/scenarios/bpmn-activity-types.toml"}
 
 ---
 
@@ -296,7 +296,7 @@ process-variables = true
 - Return the logs and results to process
 
   ```bash
-  uv run --with=purjo -- pur serve .
+  uv run --with=purjo -- pur serve . --log-level=DEBUG
   ```
 
 ---
