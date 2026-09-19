@@ -232,6 +232,38 @@ local function bpmn_to_webp(bpmn_path, scenario_path, bg_color)
   return out_path
 end
 
+-- Live, interactive BPMN simulator embed (see bpmn-to-image's --format html).
+-- Unlike the animated/static renders above, this needs no headless
+-- rendering at build time — it's just packaging the diagram XML with a
+-- bundled bpmn-js viewer that runs the token simulation live, in the
+-- reader's own browser.
+local simulator_assets_emitted = false
+local simulator_counter = 0
+
+local function bpmn_simulator_id(bpmn_path)
+  simulator_counter = simulator_counter + 1
+  return 'bpmn-sim-' .. get_file_hash(bpmn_path):sub(1, 12) .. '-' .. simulator_counter
+end
+
+local function bpmn_to_simulator_html(bpmn_path, bg, id, include_assets)
+  local args = {'--format', 'html', '--id', id}
+  if bg then
+    table.insert(args, '--background')
+    table.insert(args, bg)
+  end
+  if not include_assets then
+    table.insert(args, '--no-assets')
+  end
+  table.insert(args, bpmn_path)
+  table.insert(args, '-')
+
+  local ok, result = pcall(pandoc.pipe, 'bpmn-to-image', args, '')
+  if not ok then
+    error(('slides: bpmn-to-image --format html failed for %s:\n%s\n'):format(bpmn_path, tostring(result)))
+  end
+  return result
+end
+
 -- Extract poster frame from video using ffmpeg
 local function extract_video_poster(video_path)
   local hash = get_hash(video_path)
@@ -321,6 +353,15 @@ function Image(img)
     if scenario then scenario = resolve_path(scenario) or scenario end
     local animated = img.attributes.animated == 'true' or scenario ~= nil
     local bg = img.attributes.background
+    local simulator = img.attributes.simulator == 'true' or img.attributes.simulator == '1'
+
+    if simulator and is_marp then
+      local id = bpmn_simulator_id(resolved_src)
+      local include_assets = not simulator_assets_emitted
+      local html = bpmn_to_simulator_html(resolved_src, bg, id, include_assets)
+      simulator_assets_emitted = true
+      return pandoc.RawInline('html', html)
+    end
 
     local img_fast = is_fast
     if img.attributes.fast ~= nil then
@@ -469,7 +510,15 @@ function CodeBlock(block)
     end
 
     bpmn_autolayout(bpmn_path)
-    
+
+    if is_marp and block.classes:includes('simulator') then
+      local id = bpmn_simulator_id(bpmn_path)
+      local include_assets = not simulator_assets_emitted
+      local html = bpmn_to_simulator_html(bpmn_path, nil, id, include_assets)
+      simulator_assets_emitted = true
+      return pandoc.RawBlock('html', html)
+    end
+
     if is_latex then
       local svg_path = bpmn_to_svg(bpmn_path, nil)
       local pdf_path = svg_to_pdf(svg_path)

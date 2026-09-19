@@ -14,7 +14,7 @@ fontsize: 14pt
 
 ## Automation Control Plane
 
-![](examples/diagrams/automation-control-plane.bpmn){animated="true" scenario="examples/scenarios/automation-control-plane.toml"}
+![](examples/diagrams/automation-control-plane.bpmn){simulator="true" scenario="examples/scenarios/automation-control-plane.toml"}
 
 ## Asko Soukka (RFCP®)
 

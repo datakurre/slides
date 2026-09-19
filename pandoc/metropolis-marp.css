@@ -65,13 +65,13 @@ section:not(.title-slide):has(> h1:first-child) > h1:first-child {
 }
 
 /* Slides whose only body content is an image or diagram are centered too. */
-section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video)):not(:has(> :not(h2):not(img):not(video):not(.notes))) {
+section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video, .bpmn-simulator)):not(:has(> :not(h2):not(img):not(video):not(.bpmn-simulator):not(.notes))) {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
-section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video)):not(:has(> :not(h2):not(img):not(video):not(.notes))) > h2:first-child + :is(img, video) {
+section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video, .bpmn-simulator)):not(:has(> :not(h2):not(img):not(video):not(.bpmn-simulator):not(.notes))) > h2:first-child + :is(img, video, .bpmn-simulator) {
   flex: 1 1 auto;
   min-height: 0;
   position: static !important;
@@ -82,11 +82,11 @@ section:not(.title-slide):not(:has(> h1:first-child)):has(> :is(img, video)):not
   margin: auto auto auto 0;
 }
 
-section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)):has(> :is(img, video)):not(:has(> :not(img):not(video):not(.notes))) {
+section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)):has(> :is(img, video, .bpmn-simulator)):not(:has(> :not(img):not(video):not(.bpmn-simulator):not(.notes))) {
   padding: 64px;
 }
 
-section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)):has(> :is(img, video)):not(:has(> :not(img):not(video):not(.notes))) > :is(img, video) {
+section:not(.title-slide):not(:has(> h1:first-child)):not(:has(> h2:first-child)):has(> :is(img, video, .bpmn-simulator)):not(:has(> :not(img):not(video):not(.bpmn-simulator):not(.notes))) > :is(img, video, .bpmn-simulator) {
   flex: 1 1 auto;
   min-height: 0;
   position: static !important;
@@ -199,7 +199,7 @@ video {
   min-height: 0;
 }
 
-.column > :is(img, video) {
+.column > :is(img, video, .bpmn-simulator) {
   flex: 1 1 auto;
   min-height: 0;
   max-width: 100% !important;
@@ -209,19 +209,33 @@ video {
   margin: auto auto auto 0;
 }
 
-section > p:has(> :is(img, video)),
-section > p:has(> a > :is(img, video)),
-.column > p:has(> :is(img, video)),
-.column > p:has(> a > :is(img, video)) {
+/*
+ * img/video are replaced elements: object-fit keeps their aspect ratio, so
+ * the `margin: auto ... 0` above centers the (generally smaller) rendered
+ * result within the flex box. `.bpmn-simulator` has no intrinsic size of
+ * its own — it's a plain container bpmn-js measures and fits its diagram
+ * into — so the same auto margins just eat the flex box's height instead
+ * of letting the container (and the diagram fit into it) actually grow to
+ * fill it, same as the "shrink to fit" bug this fixes at every other
+ * `.bpmn-simulator` selector above. Zero margin lets it stretch instead.
+ */
+.column > .bpmn-simulator {
+  margin: 0;
+}
+
+section > p:has(> :is(img, video, .bpmn-simulator)),
+section > p:has(> a > :is(img, video, .bpmn-simulator)),
+.column > p:has(> :is(img, video, .bpmn-simulator)),
+.column > p:has(> a > :is(img, video, .bpmn-simulator)) {
   display: flex;
   flex: 1 1 auto;
   min-height: 0;
 }
 
-section > p > :is(img, video),
-section > p > a > :is(img, video),
-.column > p > :is(img, video),
-.column > p > a > :is(img, video) {
+section > p > :is(img, video, .bpmn-simulator),
+section > p > a > :is(img, video, .bpmn-simulator),
+.column > p > :is(img, video, .bpmn-simulator),
+.column > p > a > :is(img, video, .bpmn-simulator) {
   flex: 1 1 auto;
   min-height: 0;
   max-width: 100% !important;
@@ -229,6 +243,16 @@ section > p > a > :is(img, video),
   object-fit: contain;
   object-position: left center;
   margin: auto auto auto 0;
+}
+
+/* See the comment above `.column > .bpmn-simulator` — same fix, for a
+ * simulator embed that (as in practice it always does — Markdown wraps a
+ * lone image/embed in a paragraph) ends up nested in a `<p>`. */
+section > p > .bpmn-simulator,
+section > p > a > .bpmn-simulator,
+.column > p > .bpmn-simulator,
+.column > p > a > .bpmn-simulator {
+  margin: 0;
 }
 
 /* Explicit media widths should not be expanded by the flex layout. */

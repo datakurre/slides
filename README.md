@@ -12,7 +12,7 @@ Powered by [Nix Flakes](https://nixos.org), [Pandoc](https://pandoc.org), and [`
 - **Dual Output Compilation**:
   - **Beamer PDF**: Modern 16:9 widescreen slides styled with the [Metropolis theme](https://github.com/matze/mtheme) and Fira Sans typography.
 - **Marp HTML**: Linear, Markdown-native HTML presentations with no two-dimensional navigation.
-- **BPMN 2.0 Process Diagrams**: Embed `.bpmn` files or inline ```` ```bpmn ```` blocks (automatically rendered to vector SVG/PDF or animated formats via headless `bpmn-to-image`).
+- **BPMN 2.0 Process Diagrams**: Embed `.bpmn` files or inline ```` ```bpmn ```` blocks (automatically rendered to vector SVG/PDF, animated formats, or — in Marp HTML — a live interactive simulator via `bpmn-to-image`).
 - **Video & Animations**: Native HTML5 `<video>` embedding in HTML slides and automated poster frame extraction with `ffmpeg` in Beamer PDFs.
 - **Live Development**: Live reload on file change (`--watch`) and built-in local preview server (`--serve`).
 - **Reproducible Nix Toolchain**: Pinned TeX Live closure, Pandoc, `bpmn-to-image`, `librsvg`, and `ffmpeg` managed via `flake.nix`.
@@ -163,6 +163,12 @@ Or write inline BPMN XML blocks:
 </bpmn:definitions>
 ```
 ````
+
+In Marp HTML, a diagram can also be embedded as a **live, interactive simulator** instead of a pre-rendered image or animation — a real `bpmn-js` viewer running in the reader's browser, with play/pause and click-to-steer-a-gateway, the same as the interactive tool itself:
+```markdown
+![](diagrams/order-process.bpmn){simulator="true"}
+```
+or, for an inline block, add the `simulator` class: ` ```{.bpmn .simulator} `. There's no scenario to script here — unlike the pre-rendered animation, it's driven live by whoever is viewing the slide. Ignored (falls back to a static frame) in Beamer PDF, which can't run live JavaScript.
 
 #### 5. Embedded Videos
 ```markdown

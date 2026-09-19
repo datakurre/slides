@@ -51,11 +51,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789419791,
-        "narHash": "sha256-0Ork8LazLSw5nV3SZ98UmcoGLFRoH+4fjSIMFT1Kk6k=",
+        "lastModified": 1789842937,
+        "narHash": "sha256-NR183v9urdO3e+nWbKDK0YID8LKFSDzZtcqTTKFKoM8=",
         "owner": "datakurre",
         "repo": "bpmn-to-image",
-        "rev": "1051171262838568d541f97844ed6398b3ff2b12",
+        "rev": "17210d4e0a321b677825f59117914cf6dd566aa4",
         "type": "github"
       },
       "original": {

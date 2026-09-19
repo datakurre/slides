@@ -33,7 +33,7 @@ Markdown Document (.md)
 - **`vendor/outline/`**: Git submodule (`https://github.com/datakurre/outline.git`) providing the terminal outline editor as its own Nix flake input (`github:datakurre/outline`). Built via `outline.packages.<system>.default`.
 - **`pandoc/beamer-metropolis.latex`**: LaTeX Beamer template configuring Metropolis, Fira Sans, 16:9 widescreen, custom theme colors, syntax highlighting, and pandoc macros.
 - **`pandoc/slides.lua`**: Pandoc Lua filter handling:
-  - `.bpmn` diagram conversion to vector PDF (LaTeX) and vector SVG / animated MP4 (HTML).
+  - `.bpmn` diagram conversion to vector PDF (LaTeX) and vector SVG / animated WebP / live interactive simulator (HTML).
    - Inline ```` ```bpmn ```` code blocks; generated BPMN files are always run through `bpmn-autolayout` before rendering.
   - `.svg` conversion to `.pdf` via `rsvg-convert` for pdflatex.
   - `.eps` conversion to `.pdf` via `epstopdf` / `ghostscript`.
@@ -105,6 +105,7 @@ make clean                                     # Clean build directory and tempo
      ...
      ```
      ````
+   - **Live simulator (Marp HTML only)**: `![](diagrams/process.bpmn){simulator="true"}` or a ` ```{.bpmn .simulator} ` inline block embeds an interactive `bpmn-js` viewer with token simulation (play/pause, click a gateway to steer it) instead of a pre-rendered image/animation — see `bpmn-to-image --format html`. Ignored for `scenario`/`animated`/`fast`; ignored entirely (falls back to a static frame) for Beamer PDF, which can't run live JS.
 4. **Columns**:
    Use Pandoc fenced divs for multi-column layouts:
    ```markdown
