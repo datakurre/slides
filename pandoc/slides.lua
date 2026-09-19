@@ -245,13 +245,26 @@ local function bpmn_simulator_id(bpmn_path)
   return 'bpmn-sim-' .. get_file_hash(bpmn_path):sub(1, 12) .. '-' .. simulator_counter
 end
 
-local function bpmn_to_simulator_html(bpmn_path, bg, id, include_assets)
+local function bpmn_to_simulator_html(bpmn_path, id, opts)
+  opts = opts or {}
   local args = {'--format', 'html', '--id', id}
-  if bg then
+  if opts.background then
     table.insert(args, '--background')
-    table.insert(args, bg)
+    table.insert(args, opts.background)
   end
-  if not include_assets then
+  if opts.width then
+    table.insert(args, '--width')
+    table.insert(args, opts.width)
+  end
+  if opts.height then
+    table.insert(args, '--height')
+    table.insert(args, opts.height)
+  end
+  if opts.align then
+    table.insert(args, '--align')
+    table.insert(args, opts.align)
+  end
+  if not opts.include_assets then
     table.insert(args, '--no-assets')
   end
   table.insert(args, bpmn_path)
@@ -357,8 +370,13 @@ function Image(img)
 
     if simulator and is_marp then
       local id = bpmn_simulator_id(resolved_src)
-      local include_assets = not simulator_assets_emitted
-      local html = bpmn_to_simulator_html(resolved_src, bg, id, include_assets)
+      local html = bpmn_to_simulator_html(resolved_src, id, {
+        background = bg,
+        width = img.attributes.width,
+        height = img.attributes.height,
+        align = img.attributes.align and img.attributes.align:lower() or nil,
+        include_assets = not simulator_assets_emitted,
+      })
       simulator_assets_emitted = true
       return pandoc.RawInline('html', html)
     end
@@ -513,8 +531,13 @@ function CodeBlock(block)
 
     if is_marp and block.classes:includes('simulator') then
       local id = bpmn_simulator_id(bpmn_path)
-      local include_assets = not simulator_assets_emitted
-      local html = bpmn_to_simulator_html(bpmn_path, nil, id, include_assets)
+      local html = bpmn_to_simulator_html(bpmn_path, id, {
+        background = block.attributes.background,
+        width = block.attributes.width,
+        height = block.attributes.height,
+        align = block.attributes.align and block.attributes.align:lower() or nil,
+        include_assets = not simulator_assets_emitted,
+      })
       simulator_assets_emitted = true
       return pandoc.RawBlock('html', html)
     end

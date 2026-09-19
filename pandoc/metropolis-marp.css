@@ -255,30 +255,41 @@ section > p > a > .bpmn-simulator,
   margin: 0;
 }
 
-/* Explicit media widths should not be expanded by the flex layout. */
+/*
+ * Explicit media widths should not be expanded by the flex layout.
+ * `.bpmn-simulator-sized` is the simulator embed's equivalent signal — an
+ * explicit width/height attribute in the source Markdown — since its
+ * container always carries a `width:` in its inline style (the default
+ * fill-available-space case needs one too), unlike img/video, which only
+ * get a `style` attribute at all when the author set one.
+ */
 img[style*="width:"],
 img[style*="height:"],
 video[style*="width:"],
-video[style*="height:"] {
+video[style*="height:"],
+.bpmn-simulator-sized {
   flex: 0 1 auto !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
 
 section img.align-left,
-section video.align-left {
+section video.align-left,
+section .bpmn-simulator.align-left {
   margin-left: 0 !important;
   margin-right: auto !important;
 }
 
 section img.align-center,
-section video.align-center {
+section video.align-center,
+section .bpmn-simulator.align-center {
   margin-left: auto !important;
   margin-right: auto !important;
 }
 
 section img.align-right,
-section video.align-right {
+section video.align-right,
+section .bpmn-simulator.align-right {
   margin-left: auto !important;
   margin-right: 0 !important;
 }

@@ -114,7 +114,7 @@ reviewed as documentation and deployed as executable process definitions.
 - Timers handle deadlines
 - Errors handle business exceptions
 
-![](examples/diagrams/bpmn-boundary-events.bpmn){height="60%" animated="true" scenario="examples/scenarios/bpmn-boundary-events.toml"}
+![](examples/diagrams/bpmn-boundary-events.bpmn){height="100%" simulator="true" scenario="examples/scenarios/bpmn-boundary-events.toml"}
 
 ## One more BPMN example
 
