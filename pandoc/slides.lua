@@ -613,6 +613,22 @@ function Div(div)
   return div
 end
 
+-- A linked image (`[![](img.png)](url)`) becomes `\href{url}{\pandocbounded{...}}`
+-- in Beamer output. `\pandocbounded` (see beamer-metropolis.latex) starts and
+-- ends with a bare `\par` to center the image as its own paragraph — safe on
+-- its own, but `\par` inside `\href`'s argument forces vertical mode right
+-- where hyperref needs to close the link, raising a fatal
+-- "\pdfendlink cannot be used in vertical mode" error. A clickable image has
+-- no benefit in a static PDF anyway, so just drop the link and keep the
+-- image for LaTeX; Marp/HTML output (where this isn't an issue, and the
+-- click-through is actually usable) keeps the link.
+function Link(link)
+  if is_latex and #link.content == 1 and link.content[1].t == 'Image' then
+    return link.content
+  end
+  return link
+end
+
 -- Process Metadata
 function Meta(meta)
   if not meta.aspectratio then
@@ -682,6 +698,7 @@ return {
     Pandoc = Pandoc,
     Header = Header,
     Div = Div,
+    Link = Link,
     CodeBlock = CodeBlock,
     HorizontalRule = HorizontalRule,
     Image = Image,
