@@ -278,7 +278,11 @@ Different histories and product models; BPMN XML is the common boundary.
 :::
 :::
 
-## Under Construction
+---
+
+# Work in Progress {.section-slide}
+
+## Plone Operaton Integration
 
 ### [github.com/collective/collective.bpmproxy](https://github.com/collective/collective.bpmproxy)
 
@@ -295,7 +299,7 @@ Different histories and product models; BPMN XML is the common boundary.
 :::
 :::
 
-## Under Construction
+## Python Task Worker
 
 ### [pypi.org/project/operaton-tasks](https://pypi.org/project/operaton-tasks/)
 
@@ -316,7 +320,7 @@ async def hello_world(task: LockedExternalTaskDto) -> ExternalTaskComplete:
 	)
 ```
 
-## Under Construction
+## Robot Task Worker
 
 ### [pypi.org/project/purjo](https://pypi.org/project/purjo/)
 
