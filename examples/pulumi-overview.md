@@ -3,7 +3,7 @@ title: "Pulumi – sovelluspalvelinympäristö koodina"
 subtitle: "DIP-konferenssi"
 author: "Asko Soukka"
 date: "27.03.2024"
-logo: "media/pulumi-overview/images/jyu-vaaka-kaksikielinen.pdf"
+logo: "media/pulumi-overview/images/jyu-vaaka-kaksikielinen.eps"
 colors:
   primary: "#002957"
   accent: "#F1563F"

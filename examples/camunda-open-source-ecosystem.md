@@ -2,7 +2,7 @@
 title: "Camundan BPMN-teknologia osana avoimen lähdekoodin ratkaisuja"
 author: "Asko Soukka"
 date: "20.03.2024"
-logo: "media/camunda-open-source-ecosystem/images/jyu-vaaka-kaksikielinen.pdf"
+logo: "media/camunda-open-source-ecosystem/images/jyu-vaaka-kaksikielinen.eps"
 colors:
   primary: "#002957"
   accent: "#F1563F"

@@ -2,7 +2,7 @@
 title: "Camunda Chapter: Finland"
 author: "Asko Soukka"
 date: "12.6.2024"
-logo: "media/camunda-meetup-fi-2024-06/images/jyu-vaaka-kaksikielinen.pdf"
+logo: "media/camunda-meetup-fi-2024-06/images/jyu-vaaka-kaksikielinen.eps"
 colors:
   primary: "#002957"
   accent: "#F1563F"
