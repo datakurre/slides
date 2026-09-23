@@ -1,0 +1,37 @@
+fps = 12
+
+[[token]]
+name = "activity-one"
+  [[token.step]]
+  element = "Start"
+  at_ms = 0
+  [[token.step]]
+  element = "Robot_ServiceTask"
+  pause_ms = 500
+
+[[token]]
+name = "activity-two"
+  [[token.step]]
+  element = "Start"
+  at_ms = 1000
+  [[token.step]]
+  element = "Robot_ServiceTask"
+  pause_ms = 500
+
+[[token]]
+name = "activity-three"
+  [[token.step]]
+  element = "Start"
+  at_ms = 2000
+  [[token.step]]
+  element = "Robot_ServiceTask"
+  pause_ms = 500
+
+[[token]]
+name = "activity-four"
+  [[token.step]]
+  element = "Start"
+  at_ms = 3000
+  [[token.step]]
+  element = "Robot_ServiceTask"
+  pause_ms = 500

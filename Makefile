@@ -87,4 +87,4 @@ clean: ## Clean generated PDF, HTML, build artifacts, and the render cache
 	@rm -f "$(CACHE_DIR)"/bpmn-*.svg "$(CACHE_DIR)"/bpmn-anim-*.webp \
 		"$(CACHE_DIR)"/svg-*.pdf "$(CACHE_DIR)"/video-poster-*.png \
 		"$(CACHE_DIR)"/eps-*.pdf "$(CACHE_DIR)"/eps-*.png \
-		"$(CACHE_DIR)"/inline-*.bpmn
+		"$(CACHE_DIR)"/inline-*.bpmn "$(CACHE_DIR)"/symbol-*.bpmn

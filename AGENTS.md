@@ -34,7 +34,8 @@ Markdown Document (.md)
 - **`pandoc/beamer-metropolis.latex`**: LaTeX Beamer template configuring Metropolis, Fira Sans, 16:9 widescreen, custom theme colors, syntax highlighting, and pandoc macros.
 - **`pandoc/slides.lua`**: Pandoc Lua filter handling:
   - `.bpmn` diagram conversion to vector PDF (LaTeX) and vector SVG / animated WebP / live interactive simulator (HTML).
-   - Inline ```` ```bpmn ```` code blocks; generated BPMN files are always run through `bpmn-autolayout` before rendering.
+  - Standalone BPMN symbols via `.bpmn-symbol` spans and `bpmn-symbol:<type>` image sources; generated symbols are rendered through `bpmn-to-image` and cached by content hash.
+  - Inline ```` ```bpmn ```` code blocks; generated BPMN files are always run through `bpmn-autolayout` before rendering.
   - `.svg` conversion to `.pdf` via `rsvg-convert` for pdflatex.
   - `.eps` conversion to `.pdf` via `epstopdf` / `ghostscript`.
   - `.mp4` / `.webm` video handling (poster snapshot for PDF, `<video>` for HTML).
@@ -98,14 +99,16 @@ make clean                                     # Clean build directory and tempo
     - Run generated or checked-in `.bpmn` files through `bpmn-autolayout` before rendering or committing them:
       `nix run .#bpmnAutoLayout -- diagrams/process.bpmn`
     - Inline BPMN blocks are laid out automatically by the `slides` filter. External source files are not modified during a slide build.
-   - Inline block:
+    - Inline block:
      ````markdown
      ```bpmn
      <?xml version="1.0" encoding="UTF-8"?>
      ...
      ```
-     ````
-   - **Live simulator (Marp HTML only)**: `![](diagrams/process.bpmn){simulator="true"}` or a ` ```{.bpmn .simulator} ` inline block embeds an interactive `bpmn-js` viewer with token simulation (play/pause, click a gateway to steer it) instead of a pre-rendered image/animation — see `bpmn-to-image --format html`. Ignored for `scenario`/`animated`/`fast`; ignored entirely (falls back to a static frame) for Beamer PDF, which can't run live JS.
+      ````
+    - **Individual symbols**: Use `[Review request]{.bpmn-symbol type="userTask"}` inside prose. The span text becomes the BPMN label; omit the text for an unlabeled event or gateway. Standalone forms include `![Review request](bpmn-symbol:userTask)` and `![](bpmn-symbol:exclusiveGateway)`. Supported types include task variants, `callActivity`, `subProcess`, start/end/intermediate events, and exclusive, parallel, inclusive, complex, and event-based gateways.
+    - Symbol output remains inline in Marp HTML and is converted to PDF for Beamer. The Marp theme scales `.bpmn-symbol` images to the surrounding text line; full BPMN diagrams remain block-level.
+    - **Live simulator (Marp HTML only)**: `![](diagrams/process.bpmn){simulator="true"}` or a ` ```{.bpmn .simulator} ` inline block embeds an interactive `bpmn-js` viewer with token simulation (play/pause, click a gateway to steer it) instead of a pre-rendered image/animation — see `bpmn-to-image --format html`. Ignored for `scenario`/`animated`/`fast`; ignored entirely (falls back to a static frame) for Beamer PDF, which can't run live JS.
 4. **Columns**:
    Use Pandoc fenced divs for multi-column layouts:
    ```markdown
@@ -141,6 +144,12 @@ make build
 Verify generated PDFs using `pdftotext` from `poppler-utils`:
 ```bash
 nix shell nixpkgs#poppler-utils --command pdftotext build/demo.pdf -
+```
+For symbol-specific verification, build the example deck in both formats:
+```bash
+nix run . -- --marp --no-cache examples/bpmn-symbols.md
+nix run . -- --pdf --no-cache examples/bpmn-symbols.md
+nix develop --command pdftotext examples/bpmn-symbols.pdf -
 ```
 
 ## Agent Sandbox

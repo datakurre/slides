@@ -32,7 +32,7 @@ Generate Beamer PDF & Marp HTML.
 
 Directly include `.bpmn` process models without manual export:
 
-![](diagrams/sample-process.bpmn)
+![](media/demo/diagrams/sample-process.bpmn)
 
 The diagram is rendered to SVG/PDF automatically at build time.
 

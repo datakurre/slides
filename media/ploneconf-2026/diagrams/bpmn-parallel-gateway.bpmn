@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_Parallel" targetNamespace="http://example.com/bpmn/parallel">
+  <bpmn:process id="Process_Parallel" isExecutable="true">
+    <bpmn:startEvent id="Start">
+      <bpmn:outgoing>F1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:parallelGateway id="Split" name="Split">
+      <bpmn:incoming>F1</bpmn:incoming>
+      <bpmn:outgoing>F3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0wd7si7</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="A" name="Collect data">
+      <bpmn:incoming>Flow_0wd7si7</bpmn:incoming>
+      <bpmn:outgoing>F4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="B" name="Prepare report">
+      <bpmn:incoming>F3</bpmn:incoming>
+      <bpmn:outgoing>F5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="Merge" name="Merge">
+      <bpmn:incoming>F4</bpmn:incoming>
+      <bpmn:incoming>F5</bpmn:incoming>
+      <bpmn:outgoing>F6</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:endEvent id="End">
+      <bpmn:incoming>F6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="Split" />
+    <bpmn:sequenceFlow id="F3" sourceRef="Split" targetRef="B" />
+    <bpmn:sequenceFlow id="F4" sourceRef="A" targetRef="Merge" />
+    <bpmn:sequenceFlow id="F5" sourceRef="B" targetRef="Merge" />
+    <bpmn:sequenceFlow id="F6" sourceRef="Merge" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_0wd7si7" sourceRef="Split" targetRef="A" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process_Parallel">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_Parallel" bpmnElement="Process_Parallel">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="62" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Split_di" bpmnElement="Split" isMarkerVisible="true">
+        <dc:Bounds x="148" y="45" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="25" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_di" bpmnElement="A">
+        <dc:Bounds x="248" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_di" bpmnElement="Merge" isMarkerVisible="true">
+        <dc:Bounds x="395" y="45" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="404" y="23" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="495" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="B_di" bpmnElement="B">
+        <dc:Bounds x="248" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1">
+        <di:waypoint x="98" y="70" />
+        <di:waypoint x="148" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F3_di" bpmnElement="F3">
+        <di:waypoint x="173" y="95" />
+        <di:waypoint x="173" y="210" />
+        <di:waypoint x="248" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F4_di" bpmnElement="F4">
+        <di:waypoint x="348" y="70" />
+        <di:waypoint x="395" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F5_di" bpmnElement="F5">
+        <di:waypoint x="348" y="210" />
+        <di:waypoint x="420" y="210" />
+        <di:waypoint x="420" y="95" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F6_di" bpmnElement="F6">
+        <di:waypoint x="445" y="70" />
+        <di:waypoint x="495" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wd7si7_di" bpmnElement="Flow_0wd7si7">
+        <di:waypoint x="198" y="70" />
+        <di:waypoint x="248" y="70" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

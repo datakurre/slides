@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_Sequence" targetNamespace="http://example.com/bpmn/sequence">
+  <bpmn:process id="Process_Sequence" isExecutable="true">
+    <bpmn:startEvent id="Start" name="Start requested">
+      <bpmn:outgoing>Flow_Start_First</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="FirstActivity" name="Receive request">
+      <bpmn:incoming>Flow_Start_First</bpmn:incoming>
+      <bpmn:outgoing>Flow_First_Second</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="SecondActivity" name="Complete work">
+      <bpmn:incoming>Flow_First_Second</bpmn:incoming>
+      <bpmn:outgoing>Flow_Second_End</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="End" name="Work completed">
+      <bpmn:incoming>Flow_Second_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Start_First" sourceRef="Start" targetRef="FirstActivity" />
+    <bpmn:sequenceFlow id="Flow_First_Second" sourceRef="FirstActivity" targetRef="SecondActivity" />
+    <bpmn:sequenceFlow id="Flow_Second_End" sourceRef="SecondActivity" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process_Sequence">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_Sequence" bpmnElement="Process_Sequence">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="62" y="52" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="43" y="95" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FirstActivity_di" bpmnElement="FirstActivity">
+        <dc:Bounds x="148" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SecondActivity_di" bpmnElement="SecondActivity">
+        <dc:Bounds x="298" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="448" y="52" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="426" y="95" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_Start_First_di" bpmnElement="Flow_Start_First">
+        <di:waypoint x="98" y="70" />
+        <di:waypoint x="148" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_First_Second_di" bpmnElement="Flow_First_Second">
+        <di:waypoint x="248" y="70" />
+        <di:waypoint x="298" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Second_End_di" bpmnElement="Flow_Second_End">
+        <di:waypoint x="398" y="70" />
+        <di:waypoint x="448" y="70" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

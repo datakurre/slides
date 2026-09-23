@@ -2,7 +2,7 @@
 title: "Camundan BPMN-teknologia osana avoimen lähdekoodin ratkaisuja"
 author: "Asko Soukka"
 date: "20.03.2024"
-logo: "images/jyu-vaaka-kaksikielinen.eps"
+logo: "media/camunda-open-source-ecosystem/images/jyu-vaaka-kaksikielinen.pdf"
 colors:
   primary: "#002957"
   accent: "#F1563F"
@@ -10,7 +10,7 @@ colors:
 
 ##
 
-![](images/camunda-chapter-finland.png){width="85%"}
+![](media/camunda-open-source-ecosystem/images/camunda-chapter-finland.png){width="85%"}
 
 ## {.standout}
 
@@ -22,7 +22,7 @@ colors:
 :::
 
 ::: {.column width="55%"}
-![](images/bpmn-example.png){width="100%"}
+![](media/camunda-open-source-ecosystem/images/bpmn-example.png){width="100%"}
 :::
 :::
 
@@ -30,11 +30,11 @@ colors:
 
 ## [Camunda Modeler](https://camunda.com/download/modeler/)
 
-![](images/camunda-modeler.png){width="80%"}
+![](media/camunda-open-source-ecosystem/images/camunda-modeler.png){width="80%"}
 
 ## Camunda Modeler Plugins
 
-![](images/token-simulation.png){width="80%"}
+![](media/camunda-open-source-ecosystem/images/token-simulation.png){width="80%"}
 
 ## [Camunda Modeler](https://camunda.com/download/modeler/)
 
@@ -64,7 +64,7 @@ colors:
 :::
 
 ::: {.column width="48%"}
-![](images/bpmn-js.png){width="100%"}
+![](media/camunda-open-source-ecosystem/images/bpmn-js.png){width="100%"}
 :::
 :::
 
@@ -80,13 +80,13 @@ colors:
 :::
 
 ::: {.column width="48%"}
-![](images/jupyterlab-bpmn.png){width="100%"}
+![](media/camunda-open-source-ecosystem/images/jupyterlab-bpmn.png){width="100%"}
 :::
 :::
 
 ## Sphinx documentation
 
-[![](images/sphinx.png){width="80%"}](https://datakurre.github.io/automation-playground)
+[![](media/camunda-open-source-ecosystem/images/sphinx.png){width="80%"}](https://datakurre.github.io/automation-playground)
 
 # Camunda 7
 
@@ -107,7 +107,7 @@ colors:
 :::
 
 ::: {.column width="48%"}
-![](images/camunda7.png){width="100%"}
+![](media/camunda-open-source-ecosystem/images/camunda7.png){width="100%"}
 :::
 :::
 
@@ -127,7 +127,7 @@ colors:
 :::
 
 ::: {.column width="48%"}
-![](images/camunda7-plugins.png){width="100%"}
+![](media/camunda-open-source-ecosystem/images/camunda7-plugins.png){width="100%"}
 :::
 :::
 
@@ -146,7 +146,7 @@ colors:
 :::
 
 ::: {.column width="48%"}
-![](images/wksplatform.png){width="100%"}
+![](media/camunda-open-source-ecosystem/images/wksplatform.png){width="100%"}
 :::
 :::
 
@@ -207,7 +207,7 @@ colors:
 :::
 
 ::: {.column width="46%"}
-![](images/simple-monitor.png){width="100%"}
+![](media/camunda-open-source-ecosystem/images/simple-monitor.png){width="100%"}
 :::
 :::
 

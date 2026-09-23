@@ -129,6 +129,185 @@ local function get_file_hash(path)
   return get_hash(read_file(path) or path)
 end
 
+-- BPMN element types that can be rendered as a standalone symbol without
+-- requiring connections or references to other process elements.
+local bpmn_symbol_types = {
+  task = true,
+  userTask = true,
+  serviceTask = true,
+  manualTask = true,
+  scriptTask = true,
+  sendTask = true,
+  receiveTask = true,
+  businessRuleTask = true,
+  callActivity = true,
+  subProcess = true,
+  startEvent = true,
+  endEvent = true,
+  intermediateCatchEvent = true,
+  intermediateThrowEvent = true,
+  timerBoundaryEvent = true,
+  nonInterruptingTimerBoundaryEvent = true,
+  errorBoundaryEvent = true,
+  messageBoundaryEvent = true,
+  signalBoundaryEvent = true,
+  exclusiveGateway = true,
+  parallelGateway = true,
+  inclusiveGateway = true,
+  complexGateway = true,
+  eventBasedGateway = true,
+}
+
+local function xml_escape(value)
+  return tostring(value or '')
+    :gsub('&', '&amp;')
+    :gsub('<', '&lt;')
+    :gsub('>', '&gt;')
+    :gsub('"', '&quot;')
+    :gsub("'", '&apos;')
+end
+
+local function bpmn_symbol_xml(symbol_type, label)
+  local sizes = {
+    startEvent = { width = 36, height = 36 },
+    endEvent = { width = 36, height = 36 },
+    intermediateCatchEvent = { width = 36, height = 36 },
+    intermediateThrowEvent = { width = 36, height = 36 },
+    timerBoundaryEvent = { width = 36, height = 36 },
+    nonInterruptingTimerBoundaryEvent = { width = 36, height = 36 },
+    errorBoundaryEvent = { width = 36, height = 36 },
+    messageBoundaryEvent = { width = 36, height = 36 },
+    signalBoundaryEvent = { width = 36, height = 36 },
+    exclusiveGateway = { width = 50, height = 50 },
+    parallelGateway = { width = 50, height = 50 },
+    inclusiveGateway = { width = 50, height = 50 },
+    complexGateway = { width = 50, height = 50 },
+    eventBasedGateway = { width = 50, height = 50 },
+    subProcess = { width = 140, height = 100 },
+    callActivity = { width = 100, height = 80 },
+  }
+  local size = sizes[symbol_type] or { width = 100, height = 80 }
+  local name = label and tostring(label) or ''
+  local name_attribute = name ~= '' and (' name="' .. xml_escape(name) .. '"') or ''
+  local element_type = symbol_type
+  local event_definition = ''
+  if symbol_type == 'timerBoundaryEvent' then
+    element_type = 'intermediateCatchEvent'
+    event_definition = '<bpmn:timerEventDefinition />'
+  elseif symbol_type == 'nonInterruptingTimerBoundaryEvent' then
+    element_type = 'intermediateCatchEvent'
+    event_definition = '<bpmn:timerEventDefinition />'
+  elseif symbol_type == 'errorBoundaryEvent' then
+    element_type = 'intermediateCatchEvent'
+    event_definition = '<bpmn:errorEventDefinition />'
+  elseif symbol_type == 'messageBoundaryEvent' then
+    element_type = 'intermediateCatchEvent'
+    event_definition = '<bpmn:messageEventDefinition />'
+  elseif symbol_type == 'signalBoundaryEvent' then
+    element_type = 'intermediateCatchEvent'
+    event_definition = '<bpmn:signalEventDefinition />'
+  end
+
+  return ([=[<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_symbol" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_symbol" isExecutable="false">
+    <bpmn:%s id="Symbol_1"%s>%s</bpmn:%s>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_symbol">
+    <bpmndi:BPMNPlane id="BPMNPlane_symbol" bpmnElement="Process_symbol">
+      <bpmndi:BPMNShape id="Symbol_1_di" bpmnElement="Symbol_1">
+        <dc:Bounds x="0" y="0" width="%d" height="%d" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+]=]):format(element_type, name_attribute, event_definition, element_type, size.width, size.height)
+end
+
+local function dashed_boundary_symbol(svg_path)
+  local svg = read_file(svg_path)
+  if not svg then return svg_path end
+  local dashed = svg:gsub('(<circle[^>]-style=")', '%1stroke-dasharray: 4 3; ', 1)
+  if dashed == svg then return svg_path end
+
+  local output = pandoc.path.join({tmpdir, 'symbol-dashed-' .. get_hash(svg) .. '.svg'})
+  if no_cache or not file_exists(output) then
+    local f = io.open(output, 'w')
+    if not f then return svg_path end
+    f:write(dashed)
+    f:close()
+  end
+  return output
+end
+
+local function bpmn_symbol_to_file(symbol_type, label)
+  if not bpmn_symbol_types[symbol_type] then
+    error(('slides: unsupported BPMN symbol type: %s\n'):format(tostring(symbol_type)))
+  end
+
+  local xml = bpmn_symbol_xml(symbol_type, label)
+  local hash = get_hash(xml)
+  local bpmn_path = pandoc.path.join({tmpdir, 'symbol-' .. hash .. '.bpmn'})
+  if no_cache or not file_exists(bpmn_path) then
+    local f = io.open(bpmn_path, 'w')
+    if not f then
+      error(('slides: could not write generated BPMN symbol: %s\n'):format(bpmn_path))
+    end
+    f:write(xml)
+    f:close()
+  end
+  return bpmn_path
+end
+
+local function border_width(value)
+  if not value then return nil end
+  local text = tostring(value):lower():gsub('^%s+', ''):gsub('%s+$', '')
+  if text == 'thin' or text == 'medium' or text == 'thick' then
+    return text
+  end
+  if text == '0' then
+    return text
+  end
+  local units = {
+    px = true, pt = true, mm = true, cm = true, in_ = true,
+    bp = true, pc = true, em = true, ex = true, rem = true, ['%'] = true,
+  }
+  local number, unit = text:match('^(%d*%.?%d+)([a-z%%]+)$')
+  if number and units[unit == 'in' and 'in_' or unit] then
+    return text
+  end
+  return nil
+end
+
+local function latex_border_width(value)
+  local text = border_width(value)
+  if not text then return nil end
+  if text == 'thin' then return '0.4pt' end
+  if text == 'medium' then return '0.8pt' end
+  if text == 'thick' then return '1.2pt' end
+
+  local number, unit = text:match('^(%d*%.?%d+)([a-z%%]*)$')
+  if not number then return nil end
+  if unit == '' then return number .. 'pt' end
+  if unit == 'px' then
+    return ('%.4fpt'):format(tonumber(number) * 0.75)
+  end
+  if unit == '%' or unit == 'rem' then return nil end
+  return number .. unit
+end
+
+local function latex_image(img)
+  if not is_latex then return img end
+  local border = latex_border_width(img.attributes and img.attributes.border)
+  if not border then return img end
+  local src = tostring(img.src):gsub('([{}])', '\\%1')
+  return pandoc.RawInline('latex', '\\borderedimage{' .. border .. '}{' .. src .. '}')
+end
+
 local function html_image(src, attributes, image_classes)
   local safe_src = tostring(src):gsub('&', '&amp;'):gsub('"', '&quot;')
   local styles = {}
@@ -136,6 +315,8 @@ local function html_image(src, attributes, image_classes)
   if attributes then
     if attributes.width then table.insert(styles, 'width:' .. attributes.width) end
     if attributes.height then table.insert(styles, 'height:' .. attributes.height) end
+    local border = border_width(attributes.border)
+    if border then table.insert(styles, 'border:' .. border .. ' solid currentColor') end
     if attributes.align then
       local align = attributes.align:lower()
       if align == 'left' or align == 'center' or align == 'right' then
@@ -195,6 +376,56 @@ local function svg_to_pdf(svg_path)
     end
   end
   return pdf_path
+end
+
+local function render_bpmn_symbol(symbol_type, label, background)
+  local bpmn_path = bpmn_symbol_to_file(symbol_type, label)
+  local svg_path = bpmn_to_svg(bpmn_path, background)
+  if symbol_type == 'nonInterruptingTimerBoundaryEvent' then
+    svg_path = dashed_boundary_symbol(svg_path)
+  end
+  if is_latex then
+    return svg_to_pdf(svg_path)
+  end
+  return svg_path
+end
+
+local function symbol_label(value)
+  if value == nil then return nil end
+  local text = pandoc.utils.stringify(value)
+  return text ~= '' and text or nil
+end
+
+local function symbol_attributes(attributes)
+  local result = {}
+  if attributes then
+    for _, key in ipairs({'width', 'height', 'align', 'border'}) do
+      if attributes[key] then result[key] = attributes[key] end
+    end
+  end
+  return result
+end
+
+local function bpmn_symbol_label(symbol_type, label)
+  if symbol_type:match('Event$') or symbol_type:match('Gateway$') then
+    return nil
+  end
+  return label
+end
+
+local function symbol_inline(symbol_type, label, attributes)
+  local path = render_bpmn_symbol(symbol_type, bpmn_symbol_label(symbol_type, label), attributes and attributes.background)
+  if is_latex then
+    local image = pandoc.Image(pandoc.List(), path)
+    image.attr = pandoc.Attr('', {}, symbol_attributes(attributes))
+    return latex_image(image)
+  end
+
+  local attrs = symbol_attributes(attributes)
+  local data_uri = file_to_data_uri(path, 'image/svg+xml')
+  local image = pandoc.Image(pandoc.List(), data_uri or path)
+  image.attr = pandoc.Attr('', {'bpmn-symbol'}, attrs)
+  return latex_image(image)
 end
 
 -- Convert BPMN to animated WebP for browser slides.
@@ -274,6 +505,9 @@ local function bpmn_to_simulator_html(bpmn_path, id, opts)
   if not ok then
     error(('slides: bpmn-to-image --format html failed for %s:\n%s\n'):format(bpmn_path, tostring(result)))
   end
+  if opts.include_assets then
+    result = result .. [=[<script>(function(){function refit(){document.querySelectorAll('.bpmn-simulator').forEach(function(c){if(!c.getClientRects().length)return;var b=c.querySelector('.bpmn-simulator-fit');if(b)b.click()})}function schedule(){requestAnimationFrame(function(){refit();setTimeout(refit,100);setTimeout(refit,500)})}window.addEventListener('load',schedule);window.addEventListener('pageshow',schedule);window.addEventListener('hashchange',schedule);document.addEventListener('visibilitychange',function(){if(!document.hidden)schedule()})}());</script>]=]
+  end
   return result
 end
 
@@ -344,6 +578,12 @@ function Image(img)
     return img
   end
 
+  local symbol_type = raw_src:match('^bpmn%-symbol:([%w]+)$')
+  if symbol_type then
+    local label = symbol_label(img.attributes.label) or symbol_label(img.caption)
+    return symbol_inline(symbol_type, label, img.attributes)
+  end
+
   -- Let the Beamer template's pandocbounded macro size and center images.
   -- Marp keeps the author-specified dimensions and alignment attributes.
   if is_latex then
@@ -397,7 +637,7 @@ function Image(img)
       -- PDFs are static: never run token simulation just to select a frame.
       local svg_path = bpmn_to_svg(resolved_src, bg)
       img.src = svg_to_pdf(svg_path)
-      return img
+      return latex_image(img)
     elseif is_marp then
       if show_animation then
         local anim_path = bpmn_to_webp(resolved_src, scenario, bg)
@@ -420,7 +660,7 @@ function Image(img)
     end
     if is_latex then
       img.src = svg_to_pdf(resolved_src)
-      return img
+      return latex_image(img)
       elseif is_marp then
         local data_uri = file_to_data_uri(resolved_src, 'image/svg+xml')
         img.src = data_uri or resolved_src
@@ -436,7 +676,7 @@ function Image(img)
     end
     if is_latex then
       img.src = eps_to_pdf(resolved_src)
-      return img
+      return latex_image(img)
     elseif is_marp then
       local png_path = eps_to_png(resolved_src)
         if png_path then
@@ -458,7 +698,7 @@ function Image(img)
       end
       if poster and file_exists(poster) then
         img.src = poster
-        return img
+        return latex_image(img)
       end
     elseif is_marp then
       local autoplay = img.attributes.autoplay ~= 'false' and 'data-autoplay autoplay ' or ''
@@ -510,7 +750,24 @@ function Image(img)
     end
   end
   
-  return img
+  return is_latex and latex_image(img) or img
+end
+
+-- Render a standalone BPMN symbol inline in prose. The span content is used
+-- as the BPMN label, so formatting remains concise in Markdown:
+-- [Review request]{.bpmn-symbol type="userTask"}
+function Span(span)
+  local attr = span.attr
+  if not attr.classes:includes('bpmn-symbol') then
+    return span
+  end
+
+  local symbol_type = attr.attributes.type
+  if not symbol_type or symbol_type == '' then
+    error('slides: .bpmn-symbol requires a type attribute\n')
+  end
+  local label = symbol_label(span.content) or symbol_label(attr.attributes.label)
+  return symbol_inline(symbol_type, label, attr.attributes)
 end
 
 -- Process CodeBlocks (Inline BPMN Diagrams)
@@ -573,7 +830,41 @@ end
 -- Beamer creates a title frame from document metadata. Marp needs that frame
 -- represented explicitly in the Markdown stream.
 function Pandoc(doc)
-  if not is_marp or not doc.meta.title then
+  if not is_marp then
+    return doc
+  end
+
+  local function is_slide_break(block)
+    if not block then return false end
+    if block.t == 'HorizontalRule' then return true end
+    if block.t == 'RawBlock' and block.format == 'markdown' and block.text:match('^%s*%-%-%-%s*$') then
+      return true
+    end
+    return false
+  end
+
+  local normalized_blocks = pandoc.List()
+  local prev_block_is_break = (doc.meta.title ~= nil)
+
+  for _, block in ipairs(doc.blocks) do
+    -- The custom Pandoc pass below rebuilds the block list, so walk spans
+    -- explicitly here instead of relying on the default filter traversal.
+    block = pandoc.walk_block(block, {Span = Span})
+    if block.t == 'Header' and block.level == 1 then
+      if not prev_block_is_break then
+        normalized_blocks:insert(pandoc.RawBlock('markdown', '---'))
+      end
+    end
+    normalized_blocks:insert(block)
+    if is_slide_break(block) then
+      prev_block_is_break = true
+    else
+      prev_block_is_break = false
+    end
+  end
+
+  if not doc.meta.title then
+    doc.blocks = normalized_blocks
     return doc
   end
 
@@ -589,7 +880,7 @@ function Pandoc(doc)
     end
   end
   title_blocks:insert(pandoc.RawBlock('markdown', '---'))
-  title_blocks:extend(doc.blocks)
+  title_blocks:extend(normalized_blocks)
   doc.blocks = title_blocks
   return doc
 end
@@ -599,6 +890,13 @@ function Div(div)
   if is_marp and div.classes:includes('column') and div.attributes.width then
     local width = div.attributes.width
     div.attributes.style = 'width:' .. width .. ';flex-basis:' .. width .. ';'
+  end
+
+  if div.classes:includes('diagram-caption') and is_latex then
+    local blocks = pandoc.List({pandoc.RawBlock('latex', '\\begin{center}\\small\\color{slidemuted}')})
+    blocks:extend(div.content)
+    blocks:insert(pandoc.RawBlock('latex', '\\end{center}'))
+    return blocks
   end
 
   if div.classes:includes('plain') then

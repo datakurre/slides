@@ -271,7 +271,7 @@
             # diagrams and media before Marp turns the Markdown into HTML.
             if [ "$build_marp" -eq 1 ]; then
               marp_source="$work/$base-marp.md"
-              pandoc -t gfm \
+              pandoc -t gfm --wrap=none \
                 --lua-filter="${support}/pandoc/slides.lua" \
                 --slide-level=2 \
                 -M marp=true \
@@ -296,7 +296,31 @@ source = Path(sys.argv[2]).read_text()
 match = re.search(r'^fontsize:\s*([0-9.]+)pt\s*$', source, re.MULTILINE)
 base_size = float(match.group(1)) * 2.5 if match else 30
 css_variable = f':root {{ --slide-base-font-size: {base_size:g}px; }}'
-html_text = html_text.replace('</style>', css_variable + '</style>', 1)
+navigator_css = r"""
+@media screen {
+  body[data-bespoke-view=""] .bespoke-marp-parent > .bespoke-marp-osc,
+  body[data-bespoke-view="next"] .bespoke-marp-parent > .bespoke-marp-osc {
+    right: 24px;
+    bottom: 24px;
+    left: auto;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    transform: none;
+  }
+
+  .bespoke-marp-osc > span[data-bespoke-marp-osc="page"] {
+    min-width: 80px;
+  }
+
+  .bespoke-marp-osc > button {
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+  }
+}
+"""
+html_text = html_text.replace('</style>', css_variable + navigator_css + '</style>', 1)
 html_text = html_text.replace('xMinYMid meet', 'xMidYMid meet')
 
 SETTING_KEYWORDS = {

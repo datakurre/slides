@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_ServiceTasks" targetNamespace="http://example.com/bpmn/service-tasks">
+  <bpmn:process id="Process_ServiceTasks" isExecutable="true">
+    <bpmn:startEvent id="Start"><bpmn:outgoing>Flow_Start</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:userTask id="ReviewRequest" name="Review request"><bpmn:incoming>Flow_Start</bpmn:incoming><bpmn:outgoing>Flow_Review</bpmn:outgoing></bpmn:userTask>
+    <bpmn:exclusiveGateway id="Approved" name="Approved?" default="Flow_Notify"><bpmn:incoming>Flow_Review</bpmn:incoming><bpmn:outgoing>Flow_Publish</bpmn:outgoing><bpmn:outgoing>Flow_Notify</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="PublishArticle" name="Publish article" camunda:type="external" camunda:topic="publish-article"><bpmn:incoming>Flow_Publish</bpmn:incoming><bpmn:outgoing>Flow_Published</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:serviceTask id="NotifyRequester" name="Notify requester" camunda:type="external" camunda:topic="notify-requester"><bpmn:incoming>Flow_Notify</bpmn:incoming><bpmn:outgoing>Flow_Notified</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Merge"><bpmn:incoming>Flow_Published</bpmn:incoming><bpmn:incoming>Flow_Notified</bpmn:incoming><bpmn:outgoing>Flow_End</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End"><bpmn:incoming>Flow_End</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Start" sourceRef="Start" targetRef="ReviewRequest" />
+    <bpmn:sequenceFlow id="Flow_Review" sourceRef="ReviewRequest" targetRef="Approved" />
+    <bpmn:sequenceFlow id="Flow_Publish" name="yes" sourceRef="Approved" targetRef="PublishArticle" />
+    <bpmn:sequenceFlow id="Flow_Notify" name="no" sourceRef="Approved" targetRef="NotifyRequester" />
+    <bpmn:sequenceFlow id="Flow_Published" sourceRef="PublishArticle" targetRef="Merge" />
+    <bpmn:sequenceFlow id="Flow_Notified" sourceRef="NotifyRequester" targetRef="Merge" />
+    <bpmn:sequenceFlow id="Flow_End" sourceRef="Merge" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ServiceTasks">
+    <bpmndi:BPMNPlane id="BPMNPlane_ServiceTasks" bpmnElement="Process_ServiceTasks">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start"><dc:Bounds x="62" y="52" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReviewRequest_di" bpmnElement="ReviewRequest"><dc:Bounds x="148" y="30" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approved_di" bpmnElement="Approved" isMarkerVisible="true"><dc:Bounds x="298" y="45" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="297" y="25" width="54" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PublishArticle_di" bpmnElement="PublishArticle"><dc:Bounds x="398" y="30" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NotifyRequester_di" bpmnElement="NotifyRequester"><dc:Bounds x="398" y="170" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_di" bpmnElement="Merge" isMarkerVisible="true"><dc:Bounds x="545" y="45" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End"><dc:Bounds x="645" y="52" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_Start_di" bpmnElement="Flow_Start"><di:waypoint x="98" y="70" /><di:waypoint x="148" y="70" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Review_di" bpmnElement="Flow_Review"><di:waypoint x="248" y="70" /><di:waypoint x="298" y="70" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Notify_di" bpmnElement="Flow_Notify"><di:waypoint x="323" y="95" /><di:waypoint x="323" y="210" /><di:waypoint x="398" y="210" /><bpmndi:BPMNLabel><dc:Bounds x="354" y="194" width="13" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Published_di" bpmnElement="Flow_Published"><di:waypoint x="498" y="70" /><di:waypoint x="545" y="70" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Notified_di" bpmnElement="Flow_Notified"><di:waypoint x="498" y="210" /><di:waypoint x="570" y="210" /><di:waypoint x="570" y="95" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_End_di" bpmnElement="Flow_End"><di:waypoint x="595" y="70" /><di:waypoint x="645" y="70" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Publish_di" bpmnElement="Flow_Publish"><di:waypoint x="348" y="70" /><di:waypoint x="398" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="364" y="52" width="18" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,44 @@
+#!/usr/bin/env nix-shell
+#! nix-shell -i bash -p coreutils xmlstarlet
+
+set -euo pipefail
+
+usage() {
+  printf 'Usage: %s <diagram.bpmn>\n' "$0" >&2
+  printf '\nRemove BPMN labels in place from a diagram.\n' >&2
+}
+
+if [ "$#" -eq 1 ] && { [ "$1" = "-h" ] || [ "$1" = "--help" ]; }; then
+  usage
+  exit 0
+fi
+
+if [ "$#" -ne 1 ]; then
+  usage
+  exit 2
+fi
+
+input=$1
+if [ ! -f "$input" ]; then
+  printf 'Error: %s: file not found\n' "$input" >&2
+  exit 1
+fi
+
+directory=$(dirname -- "$input")
+filename=$(basename -- "$input")
+temporary=$(mktemp --tmpdir="$directory" ".${filename}.XXXXXX")
+cleanup() {
+  rm -f -- "$temporary"
+}
+trap cleanup EXIT
+
+# BPMN names are rendered as labels. Text annotations are another visible label
+# source, so remove their text nodes as well.
+xmlstarlet ed \
+  -d '//@name' \
+  -d '//*[local-name()="textAnnotation"]/*[local-name()="text"]' \
+  "$input" > "$temporary"
+
+chmod --reference="$input" "$temporary"
+mv -- "$temporary" "$input"
+trap - EXIT

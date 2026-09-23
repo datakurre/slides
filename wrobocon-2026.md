@@ -14,13 +14,13 @@ fontsize: 14pt
 
 ## Automation Control Plane
 
-![](examples/diagrams/automation-control-plane.bpmn){simulator="true" scenario="examples/scenarios/automation-control-plane.toml"}
+![](media/wrobocon-2026/diagrams/automation-control-plane.bpmn){simulator="true" scenario="media/wrobocon-2026/scenarios/automation-control-plane.toml"}
 
 ## Asko Soukka (RFCP®)
 
 ::: columns
 ::: {.column width="30%"}
-![](images/portrait.jpg)
+![](media/wrobocon-2026/images/portrait.jpg)
 :::
 ::: {.column width="60%"}
 - Software Architect at University of Jyväskylä, Finland
@@ -65,6 +65,8 @@ fontsize: 14pt
 - Visual for people, precise for engines
 - A mature ecosystem of tools and runtimes
 
+Every process begins with a [start event]{.bpmn-symbol type="startEvent"}.
+
 ::: notes
 BPMN means Business Process Model and Notation and is standardized as ISO/IEC 19510.
 Unlike an informal flowchart, it has formal execution semantics. Models can be
@@ -78,7 +80,9 @@ reviewed as documentation and deployed as executable process definitions.
 - End: the process reaches an outcome
 - Tokens: visualize the execution and state
 
-![](examples/diagrams/bpmn-sequence-flow.bpmn){height="30%" align="center" animated="true" scenario="examples/scenarios/bpmn-sequence-flow.toml"}
+The token travels to [the next activity]{.bpmn-symbol type="userTask"} along a sequence flow.
+
+![](media/wrobocon-2026/diagrams/bpmn-sequence-flow.bpmn){height="30%" align="center" simulator="true"}
 
 ## Activities
 
@@ -87,7 +91,9 @@ reviewed as documentation and deployed as executable process definitions.
 - Humans, engine, or robots can perform them
 - Sequence flows connect the work
 
-![](examples/diagrams/bpmn-activity-types.bpmn){height="30%" align="center" animated="true" scenario="examples/scenarios/bpmn-activity-types.toml"}
+An integration can be represented as a [service task]{.bpmn-symbol type="serviceTask"}.
+
+![](media/wrobocon-2026/diagrams/bpmn-activity-types.bpmn){height="30%" align="center" simulator="true"}
 
 ## Control Flow
 
@@ -96,17 +102,25 @@ reviewed as documentation and deployed as executable process definitions.
 - Parallel (**AND**) runs paths in parallel
 - Inclusive (**OR**) activates every matching path
 
+An [exclusive gateway]{.bpmn-symbol type="exclusiveGateway"} selects exactly one outgoing path.
+
 ## Exclusive Gateways
 
-![](examples/diagrams/bpmn-exclusive-merge.bpmn){animated="true" scenario="examples/scenarios/bpmn-exclusive-merge.toml"}
+An [exclusive gateway]{.bpmn-symbol type="exclusiveGateway"} evaluates conditions and chooses one path.
+
+![](media/wrobocon-2026/diagrams/bpmn-exclusive-merge.bpmn){simulator="true"}
 
 ## Parallel Gateways
 
-![](examples/diagrams/bpmn-parallel-gateway.bpmn){animated="true" scenario="examples/scenarios/bpmn-parallel-gateway.toml"}
+A [parallel gateway]{.bpmn-symbol type="parallelGateway"} activates every outgoing path.
+
+![](media/wrobocon-2026/diagrams/bpmn-parallel-gateway.bpmn){simulator="true"}
 
 ## Inclusive Gateways
 
-![](examples/diagrams/bpmn-inclusive-merge.bpmn){animated="true" scenario="examples/scenarios/bpmn-inclusive-merge.toml"}
+An [inclusive gateway]{.bpmn-symbol type="inclusiveGateway"} activates every matching path.
+
+![](media/wrobocon-2026/diagrams/bpmn-inclusive-merge.bpmn){simulator="true"}
 
 ## Exception Handling
 
@@ -114,11 +128,13 @@ reviewed as documentation and deployed as executable process definitions.
 - Timers handle deadlines
 - Errors handle business exceptions
 
-![](examples/diagrams/bpmn-boundary-events.bpmn){height="100%" simulator="true" scenario="examples/scenarios/bpmn-boundary-events.toml"}
+A [catch event]{.bpmn-symbol type="intermediateCatchEvent"} catches an exception while work is active.
+
+![](media/wrobocon-2026/diagrams/bpmn-boundary-events.bpmn){height="100%" simulator="true"}
 
 ## One more BPMN example
 
-![](examples/diagrams/data-analysis.bpmn){scenario="examples/scenarios/data-analysis.toml"}
+![](media/wrobocon-2026/diagrams/data-analysis.bpmn){scenario="media/wrobocon-2026/scenarios/data-analysis.toml"}
 
 ---
 
@@ -147,7 +163,7 @@ reviewed as documentation and deployed as executable process definitions.
 - Workers run anywhere and scale horizontally
 - Operaton provides a REST API with long polling
 
-![](examples/diagrams/bpmn-activity-types.bpmn){height="30%" align="center" animated="true" scenario="examples/scenarios/bpmn-activity-types.toml"}
+![](media/wrobocon-2026/diagrams/bpmn-activity-types.bpmn){height="30%" align="center" animated="true" scenario="media/wrobocon-2026/scenarios/bpmn-activity-types.toml"}
 
 ---
 
@@ -160,7 +176,7 @@ reviewed as documentation and deployed as executable process definitions.
 - Workers poll, fetch and complete tasks
 - Tasks "communicate" by process variables
 
-![](examples/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="examples/scenarios/bpmn-activity-types-robot.toml"}
+![](media/wrobocon-2026/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="media/wrobocon-2026/scenarios/bpmn-activity-types-robot.toml"}
 
 ## Service Tasks as Queues
 
@@ -169,7 +185,7 @@ reviewed as documentation and deployed as executable process definitions.
 - Multiple workers can share the queue
 - The same topic can be reused in BPMN
 
-![](examples/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="examples/scenarios/bpmn-activity-types-robot.toml"}
+![](media/wrobocon-2026/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="media/wrobocon-2026/scenarios/bpmn-activity-types-robot.toml"}
 
 ## External Task Worker
 
@@ -178,7 +194,7 @@ reviewed as documentation and deployed as executable process definitions.
 - Execute the Robot task
 - Return variables to process
 
-![](examples/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="examples/scenarios/bpmn-activity-types-robot.toml"}
+![](media/wrobocon-2026/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="media/wrobocon-2026/scenarios/bpmn-activity-types-robot.toml"}
 
 ## Introducing Purjo
 

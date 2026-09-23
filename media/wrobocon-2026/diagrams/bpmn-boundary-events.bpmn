@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_Boundary" targetNamespace="http://example.com/bpmn/boundary">
+  <bpmn:process id="Process_Boundary" isExecutable="true">
+    <bpmn:startEvent id="Start">
+      <bpmn:outgoing>Flow_1a9nntp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_Pay" name="Collect payment" camunda:type="external" camunda:topic="robot.collect-payment">
+      <bpmn:incoming>Flow_1a9nntp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sdppdp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End">
+      <bpmn:incoming>Flow_1sdppdp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Boundary_Timeout" name="Timeout" attachedToRef="Task_Pay">
+      <bpmn:outgoing>Flow_Timeout_Retry</bpmn:outgoing>
+      <bpmn:timerEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="Task_Retry" name="Retry payment" camunda:type="external" camunda:topic="robot.retry-payment">
+      <bpmn:incoming>Flow_Timeout_Retry</bpmn:incoming>
+      <bpmn:outgoing>Flow_17kvfx4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_Retry">
+      <bpmn:incoming>Flow_17kvfx4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Timeout_Retry" sourceRef="Boundary_Timeout" targetRef="Task_Retry" />
+    <bpmn:sequenceFlow id="Flow_1a9nntp" sourceRef="Start" targetRef="Task_Pay" />
+    <bpmn:sequenceFlow id="Flow_1sdppdp" sourceRef="Task_Pay" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_17kvfx4" sourceRef="Task_Retry" targetRef="End_Retry" />
+    <bpmn:boundaryEvent id="Event_0v187hv" name="Error" attachedToRef="Task_Retry">
+      <bpmn:outgoing>Flow_0fqqnnk</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1xniima" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_1l0qjw0">
+      <bpmn:incoming>Flow_0fqqnnk</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0fqqnnk" sourceRef="Event_0v187hv" targetRef="Event_1l0qjw0" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process_Boundary">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_Boundary" bpmnElement="Process_Boundary">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="100" y="122" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Pay_di" bpmnElement="Task_Pay">
+        <dc:Bounds x="196" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="356" y="122" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Retry_di" bpmnElement="Task_Retry">
+        <dc:Bounds x="460" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Retry_di" bpmnElement="End_Retry">
+        <dc:Bounds x="632" y="122" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1l0qjw0_di" bpmnElement="Event_1l0qjw0">
+        <dc:Bounds x="632" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Boundary_Timeout_di" bpmnElement="Boundary_Timeout">
+        <dc:Bounds x="228" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="264" y="198" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0v187hv_di" bpmnElement="Event_0v187hv">
+        <dc:Bounds x="492" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="530" y="198" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_Timeout_Retry_di" bpmnElement="Flow_Timeout_Retry">
+        <di:waypoint x="246" y="198" />
+        <di:waypoint x="246" y="270" />
+        <di:waypoint x="430" y="270" />
+        <di:waypoint x="430" y="140" />
+        <di:waypoint x="460" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a9nntp_di" bpmnElement="Flow_1a9nntp">
+        <di:waypoint x="136" y="140" />
+        <di:waypoint x="196" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sdppdp_di" bpmnElement="Flow_1sdppdp">
+        <di:waypoint x="296" y="140" />
+        <di:waypoint x="356" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17kvfx4_di" bpmnElement="Flow_17kvfx4">
+        <di:waypoint x="560" y="140" />
+        <di:waypoint x="632" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fqqnnk_di" bpmnElement="Flow_0fqqnnk">
+        <di:waypoint x="510" y="198" />
+        <di:waypoint x="510" y="270" />
+        <di:waypoint x="632" y="270" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

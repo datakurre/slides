@@ -3,7 +3,7 @@ title: "Pulumi – sovelluspalvelinympäristö koodina"
 subtitle: "DIP-konferenssi"
 author: "Asko Soukka"
 date: "27.03.2024"
-logo: "images/jyu-vaaka-kaksikielinen.eps"
+logo: "media/pulumi-overview/images/jyu-vaaka-kaksikielinen.pdf"
 colors:
   primary: "#002957"
   accent: "#F1563F"
@@ -33,13 +33,13 @@ resource "vsphere_virtual_machine" "vm" {
 
 ##
 
-![](pulumi-images/terraform-architecture-diagram.png){width="85%"}
+![](media/pulumi-overview/images/terraform-architecture-diagram.png){width="85%"}
 
 # With Pulumi
 
 ##
 
-![](pulumi-images/pulumi-architecture-diagram.png){width="85%"}
+![](media/pulumi-overview/images/pulumi-architecture-diagram.png){width="85%"}
 
 ## Pulumi resource in Python
 
@@ -212,4 +212,4 @@ def create_pulumi_program(
 
 ## {.standout}
 
-![](pulumi-images/nixos-logo-white-hires.png){width="50%"}
+![](media/pulumi-overview/images/nixos-logo-white-hires.png){width="50%"}

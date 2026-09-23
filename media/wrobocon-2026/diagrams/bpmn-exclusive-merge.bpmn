@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_Xor" targetNamespace="http://example.com/bpmn/xor">
+  <bpmn:process id="Process_Xor" isExecutable="true">
+    <bpmn:startEvent id="Start">
+      <bpmn:outgoing>F1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Split" name="Valid?" default="F3">
+      <bpmn:incoming>F1</bpmn:incoming>
+      <bpmn:outgoing>F3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ov532z</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Accept" name="Accept order">
+      <bpmn:incoming>Flow_0ov532z</bpmn:incoming>
+      <bpmn:outgoing>F4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Reject" name="Reject order">
+      <bpmn:incoming>F3</bpmn:incoming>
+      <bpmn:outgoing>F5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Merge" name="Merge">
+      <bpmn:incoming>F4</bpmn:incoming>
+      <bpmn:incoming>F5</bpmn:incoming>
+      <bpmn:outgoing>F6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End">
+      <bpmn:incoming>F6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="Split" />
+    <bpmn:sequenceFlow id="F3" name="no" sourceRef="Split" targetRef="Reject" />
+    <bpmn:sequenceFlow id="F4" sourceRef="Accept" targetRef="Merge" />
+    <bpmn:sequenceFlow id="F5" sourceRef="Reject" targetRef="Merge" />
+    <bpmn:sequenceFlow id="F6" sourceRef="Merge" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_0ov532z" name="yes" sourceRef="Split" targetRef="Accept" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process_Xor">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_Xor" bpmnElement="Process_Xor">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="62" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Split_di" bpmnElement="Split" isMarkerVisible="true">
+        <dc:Bounds x="148" y="45" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="25" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Accept_di" bpmnElement="Accept">
+        <dc:Bounds x="248" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Reject_di" bpmnElement="Reject">
+        <dc:Bounds x="248" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_di" bpmnElement="Merge" isMarkerVisible="true">
+        <dc:Bounds x="395" y="45" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="404" y="23" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="495" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1">
+        <di:waypoint x="98" y="70" />
+        <di:waypoint x="148" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F3_di" bpmnElement="F3">
+        <di:waypoint x="173" y="95" />
+        <di:waypoint x="173" y="210" />
+        <di:waypoint x="248" y="210" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="204" y="194" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F4_di" bpmnElement="F4">
+        <di:waypoint x="348" y="70" />
+        <di:waypoint x="395" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F5_di" bpmnElement="F5">
+        <di:waypoint x="348" y="210" />
+        <di:waypoint x="420" y="210" />
+        <di:waypoint x="420" y="95" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F6_di" bpmnElement="F6">
+        <di:waypoint x="445" y="70" />
+        <di:waypoint x="495" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ov532z_di" bpmnElement="Flow_0ov532z">
+        <di:waypoint x="198" y="70" />
+        <di:waypoint x="248" y="70" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="214" y="52" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

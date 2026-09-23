@@ -1,0 +1,112 @@
+digraph simple_publication_workflow {
+    graph [
+        bgcolor="transparent"
+        fontname="Helvetica,Arial,sans-serif"
+        outputorder="edgesfirst"
+        overlap=false
+        pad="0.35"
+        splines="line"
+        layout="neato"
+    ];
+    node [
+        fontname="Helvetica,Arial,sans-serif"
+        fontsize="13"
+        shape="box"
+        style="rounded,filled"
+        fillcolor="white"
+        color="black"
+        fontcolor="black"
+        penwidth="1.4"
+        margin="0.22,0.14"
+    ];
+    edge [
+        fontname="Helvetica,Arial,sans-serif"
+        fontsize="11"
+        color="black"
+        fontcolor="black"
+        arrowsize="0.7"
+    ];
+
+    _start [
+        shape="circle"
+        style="filled"
+        fillcolor="black"
+        color="black"
+        width=0.16
+        label=""
+        fixedsize=true
+        pos="-72,0!"
+    ];
+
+    private [
+        label="Private"
+        pos="0,0!"
+    ];
+
+    pending [
+        label="Pending Review"
+        pos="144,249.4!"
+    ];
+
+    published [
+        label="Published"
+        pos="288,0!"
+    ];
+
+    _submit_label [
+        label="submit"
+        shape="plain"
+        fontsize="11"
+        pos="60,135!"
+    ];
+
+    _reject_label [
+        label="reject / retract"
+        shape="plain"
+        fontsize="11"
+        pos="-20,120!"
+    ];
+
+    _publish_label [
+        label="publish"
+        shape="plain"
+        fontsize="11"
+        pos="230,120!"
+    ];
+
+    _retract_label [
+        label="retract / reject"
+        shape="plain"
+        fontsize="11"
+        pos="144,-25!"
+    ];
+
+    _return_1 [shape="none" label="" width="0" height="0" pos="70,170!"];
+    _return_2 [shape="none" label="" width="0" height="0" pos="25,110!"];
+    _return_3 [shape="none" label="" width="0" height="0" pos="-15,55!"];
+    _return_4 [shape="none" label="" width="0" height="0" pos="-40,20!"];
+
+    _start -> private [
+        tailport="e"
+        headport="w"
+    ];
+
+    private -> pending [
+    ];
+
+    pending -> published [
+    ];
+
+    pending -> _return_1 [
+        tailport="sw"
+        arrowhead="none"
+    ];
+
+    _return_1 -> _return_2 [arrowhead="none"];
+    _return_2 -> _return_3 [arrowhead="none"];
+    _return_3 -> _return_4 [arrowhead="none"];
+    _return_4 -> private [headport="w"];
+
+    published -> private [
+    ];
+}

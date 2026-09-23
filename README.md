@@ -104,6 +104,13 @@ presentation scale `12pt = 30px`.
 
 ### Slide Syntax & Features
 
+Images can request a border width with the shared `border` attribute. The
+border is rendered in both PDF and Marp HTML outputs:
+
+```markdown
+![](images/screenshot.png){border="1px"}
+```
+
 #### 1. Sections and Standard Slides
 ```markdown
 # Section Title (Generates a Metropolis section page)
@@ -170,6 +177,30 @@ In Marp HTML, a diagram can also be embedded as a **live, interactive simulator*
 ```
 or, for an inline block, add the `simulator` class: ` ```{.bpmn .simulator} `. There's no scenario to script here — unlike the pre-rendered animation, it's driven live by whoever is viewing the slide. Ignored (falls back to a static frame) in Beamer PDF, which can't run live JavaScript.
 
+Individual BPMN symbols can be inserted inline. The span text becomes the
+symbol's BPMN label:
+
+```markdown
+A request enters through [a start event]{.bpmn-symbol type="startEvent"}
+and is handled by [Review request]{.bpmn-symbol type="userTask"}.
+```
+
+The same syntax also supports standalone symbols:
+
+```markdown
+![Approved?](bpmn-symbol:exclusiveGateway)
+```
+
+Use `label="..."` instead when the standalone symbol has no image caption:
+`![](bpmn-symbol:serviceTask){label="Call billing service"}`. Supported symbol
+types include `task`, `userTask`, `serviceTask`, `manualTask`, `scriptTask`,
+`sendTask`, `receiveTask`, `businessRuleTask`, `callActivity`, `subProcess`,
+the start/end/intermediate event types, and the exclusive, parallel, inclusive,
+complex, and event-based gateways. Symbols are rendered as SVG in Marp and
+converted to PDF for Beamer, using the same BPMN renderer as full diagrams.
+Labels are supported for task and activity symbols. Event and gateway symbols
+are always rendered without labels, so they remain compact inline icons.
+
 #### 5. Embedded Videos
 ```markdown
 ![](media/demo.mp4)
@@ -177,7 +208,16 @@ or, for an inline block, add the `simulator` class: ` ```{.bpmn .simulator} `. T
 - In **Marp HTML**: Renders a native `<video>` player with autoplay/controls.
 - In **Beamer PDF**: Extracts a poster snapshot using `ffmpeg` and links to the media.
 
-#### 6. Code Syntax Highlighting
+#### 6. Diagram Captions
+Use a shared caption block below a diagram:
+```markdown
+::: {.diagram-caption}
+Activity-based publication workflow
+:::
+```
+Captions are centered, muted, and smaller in both Marp and Beamer output.
+
+#### 7. Code Syntax Highlighting
 ```markdown
 ```nix
 {
@@ -187,7 +227,7 @@ or, for an inline block, add the `simulator` class: ` ```{.bpmn .simulator} `. T
 ```
 ```
 
-#### 7. Speaker Notes
+#### 8. Speaker Notes
 ```markdown
 ::: notes
 Remember to mention the fallback plan.

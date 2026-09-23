@@ -2,7 +2,7 @@
 title: "Camunda Chapter: Finland"
 author: "Asko Soukka"
 date: "12.6.2024"
-logo: "images/jyu-vaaka-kaksikielinen.eps"
+logo: "media/camunda-meetup-fi-2024-06/images/jyu-vaaka-kaksikielinen.pdf"
 colors:
   primary: "#002957"
   accent: "#F1563F"
@@ -10,7 +10,7 @@ colors:
 
 ##
 
-![](images/camunda-chapter-finland.png){width="85%"}
+![](media/camunda-meetup-fi-2024-06/images/camunda-chapter-finland.png){width="85%"}
 
 * **2024-06-12 @ 1400–1600 EEST:**
 * BPMN ja pienet avuliaat elinkaariprosessit
@@ -26,7 +26,7 @@ colors:
 :::
 
 ::: {.column width="55%"}
-![](images/bpmn-example.png){width="100%"}
+![](media/camunda-meetup-fi-2024-06/images/bpmn-example.png){width="100%"}
 :::
 :::
 
@@ -40,7 +40,7 @@ colors:
 :::
 
 ::: {.column width="55%"}
-![](images/bpmn-example.png){width="100%"}
+![](media/camunda-meetup-fi-2024-06/images/bpmn-example.png){width="100%"}
 :::
 :::
 

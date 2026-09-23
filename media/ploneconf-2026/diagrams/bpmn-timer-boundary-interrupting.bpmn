@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_timer_interrupting" targetNamespace="http://example.com/bpmn/timer-interrupting">
+  <bpmn:process id="Process_timer_interrupting" isExecutable="false">
+    <bpmn:startEvent id="Start"><bpmn:outgoing>Flow_start</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:task id="Task_work" name="Work"><bpmn:incoming>Flow_start</bpmn:incoming><bpmn:outgoing>Flow_done</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End"><bpmn:incoming>Flow_done</bpmn:incoming></bpmn:endEvent>
+    <bpmn:boundaryEvent id="Timer_boundary" attachedToRef="Task_work"><bpmn:outgoing>Flow_timeout</bpmn:outgoing><bpmn:timerEventDefinition /></bpmn:boundaryEvent>
+    <bpmn:task id="Task_escalate" name="Escalate"><bpmn:incoming>Flow_timeout</bpmn:incoming><bpmn:outgoing>Flow_escalated</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_escalated"><bpmn:incoming>Flow_escalated</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_start" sourceRef="Start" targetRef="Task_work" />
+    <bpmn:sequenceFlow id="Flow_done" sourceRef="Task_work" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_timeout" sourceRef="Timer_boundary" targetRef="Task_escalate" />
+    <bpmn:sequenceFlow id="Flow_escalated" sourceRef="Task_escalate" targetRef="End_escalated" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_timer_interrupting"><bpmndi:BPMNPlane id="Plane_timer_interrupting" bpmnElement="Process_timer_interrupting">
+    <bpmndi:BPMNShape id="Start_di" bpmnElement="Start"><dc:Bounds x="80" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Task_work_di" bpmnElement="Task_work"><dc:Bounds x="160" y="80" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="End_di" bpmnElement="End"><dc:Bounds x="330" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Timer_boundary_di" bpmnElement="Timer_boundary"><dc:Bounds x="192" y="142" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Task_escalate_di" bpmnElement="Task_escalate"><dc:Bounds x="300" y="220" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="End_escalated_di" bpmnElement="End_escalated"><dc:Bounds x="460" y="242" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="Flow_start_di" bpmnElement="Flow_start"><di:waypoint x="116" y="118" /><di:waypoint x="160" y="118" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_done_di" bpmnElement="Flow_done"><di:waypoint x="260" y="118" /><di:waypoint x="330" y="118" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_timeout_di" bpmnElement="Flow_timeout"><di:waypoint x="210" y="178" /><di:waypoint x="210" y="260" /><di:waypoint x="300" y="260" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_escalated_di" bpmnElement="Flow_escalated"><di:waypoint x="400" y="260" /><di:waypoint x="460" y="260" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

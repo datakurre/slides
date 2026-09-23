@@ -39,6 +39,7 @@ $endfor$
 \usepackage{xcolor}
 \definecolor{slideprimary}{HTML}{$if(theme-color-primary)$$theme-color-primary$$else$002957$endif$}
 \definecolor{slideaccent}{HTML}{$if(theme-color-accent)$$theme-color-accent$$else$F1563F$endif$}
+\definecolor{slidemuted}{HTML}{667277}
 
 \setbeamercolor{palette primary}{fg=white,bg=slideprimary}
 \setbeamercolor{title separator}{fg=slideaccent,bg=slideprimary}
@@ -68,6 +69,14 @@ $endfor$
 
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Render the shared image border attribute around the original image.
+\newcommand*\borderedimage[2]{%
+  \begingroup
+  \setlength{\fboxrule}{#1}%
+  \setlength{\fboxsep}{0pt}%
+  \pandocbounded{\fbox{\includegraphics{#2}}}%
+  \endgroup
+}
 % Pandoc wraps images in \pandocbounded. Scale them to the available frame
 % area while keeping the aspect ratio, and center standalone image blocks.
 \makeatletter
