@@ -1,5 +1,5 @@
 FILE ?= examples/demo.md
-MARKDOWN ?= $(wildcard examples/*.md)
+MARKDOWN ?= $(wildcard examples/*.md) ploneconf-2026.md wrobocon-2026.md
 PORT ?= 8000
 FAST ?= 0
 FAST_FLAG = $(if $(filter 1 true yes,$(FAST)),--fast,)
@@ -27,8 +27,11 @@ build: ## Build all markdown presentations (PDF and HTML) into build/
 		echo "==> Building $$doc"; \
 		nix run . -- --all $(FAST_FLAG) $(QUICK_FLAG) $(NOCACHE_FLAG) "$$doc" || exit 1; \
 	done
-	@cp -f examples/*.pdf examples/*.html build/ 2>/dev/null || true
-	@cp -rf images pulumi-images examples/diagrams build/ 2>/dev/null || true
+	@for doc in $(MARKDOWN); do \
+		base=$${doc%.md}; \
+		cp -f "$$base.pdf" "$$base.html" build/ 2>/dev/null || true; \
+	done
+	@cp -rf images media pulumi-images examples/diagrams build/ 2>/dev/null || true
 	@touch build/.nojekyll
 	@python3 pandoc/generate-index.py
 	@echo "Build complete in ./build"
