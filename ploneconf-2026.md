@@ -19,7 +19,7 @@ fontsize: 12pt
 ![](media/ploneconf-2026/images/simple-publication-workflow.png)
 :::
 ::: {.column width="50%"}
-![](media/ploneconf-2026/images/activity-based-publication-workflow.bpmn)
+![](media/ploneconf-2026/diagrams/activity-based-publication-workflow.bpmn)
 :::
 :::
 
@@ -71,7 +71,7 @@ fontsize: 12pt
 
 ::: columns
 ::: {.column width="40%"}
-![](media/ploneconf-2026/images/activity-based-publication-workflow.png)
+![](media/ploneconf-2026/diagrams/activity-based-publication-workflow.bpmn)
 :::
 ::: {.column width="60%"}
 - Activities, sequence flows and gateways
@@ -83,18 +83,7 @@ fontsize: 12pt
 
 ## The Same, but Different
 
-![](media/ploneconf-2026/images/activity-based-publication-workflow.bpmn){simulator="true"}
-
-## State May Not Be Enough
-
-- **Concurrency**
-  - Several actors can work at the same time
-- **Timeouts & Events**
-  - The process waits for a deadline or webhook
-- **Branching & Merging**
-  - Decisions create independent parallel paths
-- **Task Data & Integrations**
-  - Task-specific forms and temporary integrations
+![](media/ploneconf-2026/diagrams/activity-based-publication-workflow.bpmn){simulator="true"}
 
 ## State May Not Be Enough
 

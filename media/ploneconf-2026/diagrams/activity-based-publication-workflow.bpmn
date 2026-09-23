@@ -5,6 +5,8 @@
     <bpmn:participant id="Participant_1ndvnor" name="CMS" />
     <bpmn:messageFlow id="Flow_1t21w7f" sourceRef="Event_0w25drc" targetRef="Participant_1ndvnor" />
     <bpmn:messageFlow id="Flow_1wco4qc" sourceRef="Event_1yy2gbd" targetRef="Participant_1ndvnor" />
+    <bpmn:messageFlow id="Flow_1rwkoji" sourceRef="Participant_1ndvnor" targetRef="Event_0pqm8gl" />
+    <bpmn:messageFlow id="Flow_1dslh1n" sourceRef="EndEvent_Published" targetRef="Participant_1ndvnor" />
   </bpmn:collaboration>
   <bpmn:process id="Process_SimplePublication" isExecutable="false">
     <bpmn:laneSet id="LaneSet_1">
@@ -83,12 +85,12 @@
       <bpmndi:BPMNShape id="Participant_SimplePublication_di" bpmnElement="Participant_SimplePublication" isHorizontal="true">
         <dc:Bounds x="100" y="80" width="908" height="488" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Reviewer_di" bpmnElement="Lane_Reviewer" isHorizontal="true">
+        <dc:Bounds x="130" y="205" width="878" height="363" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Creator_di" bpmnElement="Lane_Creator" isHorizontal="true">
         <dc:Bounds x="130" y="80" width="878" height="125" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Reviewer_di" bpmnElement="Lane_Reviewer" isHorizontal="true">
-        <dc:Bounds x="130" y="205" width="878" height="363" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1yy2gbd_di" bpmnElement="Event_1yy2gbd">
         <dc:Bounds x="546" y="127" width="36" height="36" />
@@ -99,7 +101,7 @@
       <bpmndi:BPMNShape id="EndEvent_Published_di" bpmnElement="EndEvent_Published">
         <dc:Bounds x="912" y="247" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="911.5" y="293" width="37" height="14" />
+          <dc:Bounds x="911" y="223" width="37" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_Approved_di" bpmnElement="Gateway_Approved" isMarkerVisible="true">
@@ -191,6 +193,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_1ndvnor_di" bpmnElement="Participant_1ndvnor" isHorizontal="true">
         <dc:Bounds x="100" y="628" width="908" height="60" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1t21w7f_di" bpmnElement="Flow_1t21w7f">
         <di:waypoint x="436" y="543" />
@@ -199,6 +202,14 @@
       <bpmndi:BPMNEdge id="Flow_1wco4qc_di" bpmnElement="Flow_1wco4qc">
         <di:waypoint x="564" y="163" />
         <di:waypoint x="564" y="628" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rwkoji_di" bpmnElement="Flow_1rwkoji">
+        <di:waypoint x="692" y="628" />
+        <di:waypoint x="692" y="323" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dslh1n_di" bpmnElement="Flow_1dslh1n">
+        <di:waypoint x="930" y="283" />
+        <di:waypoint x="930" y="628" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
