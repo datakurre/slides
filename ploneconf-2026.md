@@ -291,14 +291,18 @@ Different histories and product models; BPMN XML is the common boundary.
 
 ## Under Construction
 
+### [github.com/collective/collective.bpmproxy](https://github.com/collective/collective.bpmproxy)
+
 ::: columns
 ::: {.column width="32%"}
 ![](media/ploneconf-2026/images/under-construction.png){width="70%" align="center"}
 :::
 ::: {.column width="63%"}
-- **[collective.bpmproxy](https://github.com/collective/collective.bpmproxy)**: Plone backend bridge for Operaton – "released when ready"
-- Full-stack add-on: Plone backend plus Blicca support and Vite bundles for forms, diagrams, and BPMN/DMN/Form modelers
-- End-to-end demo stack with Operaton, PostgreSQL, Keycloak and browser smoke tests
+- BPM Proxy -content type with form views (Blicca)
+- Message and Signal content rule actions
+- Tasklist portlet with task form vies (Blicca)
+- Modeling and deployment controle panel (Blicca)
+- Example stack with Operaton, PostgreSQL, Keycloak and browser smoke tests
 :::
 :::
 

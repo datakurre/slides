@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_review_process" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0">
-  <bpmn:signal id="Signal_review_requested" name="plone-content-submitted-to-review" />
+  <bpmn:message id="Message_review_requested" name="plone-content-submitted-to-review" />
   <bpmn:collaboration id="Collaboration_0rvsz6b">
     <bpmn:participant id="Participant_079v67w" name="Parallel Review Process" processRef="example-plone-review-process" />
   </bpmn:collaboration>
@@ -41,7 +41,7 @@
     <bpmn:sequenceFlow id="Flow_transition_to_end" sourceRef="Activity_transition" targetRef="Event_review_completed" />
     <bpmn:startEvent id="StartEvent_review_requested" name="Review requested">
       <bpmn:outgoing>Flow_start_to_bind</bpmn:outgoing>
-      <bpmn:signalEventDefinition id="SignalEventDefinition_start" signalRef="Signal_review_requested" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_start" messageRef="Message_review_requested" />
     </bpmn:startEvent>
     <bpmn:scriptTask id="Activity_bind_key" name="Bind process to Plone content">
       <bpmn:incoming>Flow_start_to_bind</bpmn:incoming>
@@ -52,7 +52,7 @@
       <bpmn:incoming>Flow_bind_to_select</bpmn:incoming>
       <bpmn:outgoing>Flow_select_to_init</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:scriptTask id="Activity_init_reviews" name="Initialize reviews array">
+    <bpmn:scriptTask id="Activity_init_reviews" name="Initialize review transcript">
       <bpmn:incoming>Flow_select_to_init</bpmn:incoming>
       <bpmn:outgoing>Flow_init_to_sub</bpmn:outgoing>
       <bpmn:script>${execution.setVariable("reviews", "")}</bpmn:script>
@@ -62,7 +62,7 @@
       <bpmn:outgoing>Flow_114qpzv</bpmn:outgoing>
       <bpmn:script>${execution.setVariable("reviewSummary", reviews)}</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:userTask id="Activity_main_review" name="Consolidate review &#38; decide" camunda:formRef="review-decision" camunda:formRefBinding="latest" camunda:candidateGroups="Reviewers">
+    <bpmn:userTask id="Activity_main_review" name="Consolidate review &#38; decide" camunda:formRef="review-decision" camunda:formRefBinding="latest" camunda:assignee="reviewer3">
       <bpmn:incoming>Flow_114qpzv</bpmn:incoming>
       <bpmn:outgoing>Flow_main_to_gateway</bpmn:outgoing>
     </bpmn:userTask>
@@ -79,7 +79,7 @@
     <bpmn:scriptTask id="Activity_set_reject" name="Set reject transition">
       <bpmn:incoming>Flow_decision_to_reject</bpmn:incoming>
       <bpmn:outgoing>Flow_reject_to_transition</bpmn:outgoing>
-      <bpmn:script>${execution.setVariable("transition", "reject")}</bpmn:script>
+      <bpmn:script>${execution.setVariable("transition", "retract")}</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="Activity_transition" name="Transition Plone workflow" camunda:type="external" camunda:topic="Plone Workflow Transition">
       <bpmn:extensionElements>
