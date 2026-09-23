@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Generate a static index portal for built slide decks in build/."""
+"""Generate a static index portal for the published slide decks in build/."""
 
-import glob
 import os
 import re
 
-docs = sorted(glob.glob("examples/*.md"))
+docs = ["ploneconf-2026.md", "wrobocon-2026.md"]
 cards = []
 
 for d in docs:

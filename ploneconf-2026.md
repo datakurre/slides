@@ -223,7 +223,7 @@ The diagram is not just documentation. The diagram is the program.
 
 # (FL)OSS Ecosystem {.section-slide}
 
-## BPMN.io
+## [BPMN.io](https://bpmn.io/)
 
 Web-native, extensible tools built and maintained by Camunda and contributors:
 
