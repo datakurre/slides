@@ -306,6 +306,42 @@ Different histories and product models; BPMN XML is the common boundary.
 :::
 :::
 
+## Under Construction
+
+### [pypi.org/project/operaton-tasks](https://pypi.org/project/operaton-tasks/)
+
+```python
+@operaton.tasks.register("hello-world", localVariables=True)
+async def hello_world(task: LockedExternalTaskDto) -> ExternalTaskComplete:
+	return ExternalTaskComplete(
+		task=task,
+		response=CompleteExternalTaskDto(
+			workerId=task.workerId,
+			localVariables={
+				"message": VariableValueDto(
+					value="Hello World",
+					type=VariableValueType.String,
+				),
+			},
+		),
+	)
+```
+
+## Under Construction
+
+### [pypi.org/project/purjo](https://pypi.org/project/purjo/)
+
+```robotframework
+*** Variables ***
+${BPMN:PROCESS}     local
+${name}             n/a
+
+*** Tasks ***
+My Task in Robot
+    Log To Console        Hello ${name}!
+    VAR    ${greeting}    Hello ${name}!    scope=${BPMN:PROCESS}
+```
+
 ---
 
 # Thank you! {.section-slide}
