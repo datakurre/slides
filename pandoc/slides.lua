@@ -312,8 +312,20 @@ local function latex_inline_symbol(src, attrs)
   local safe_src = tostring(src):gsub('([{}])', '\\%1')
   local options = {}
   if attrs then
-    if attrs.width then table.insert(options, 'width=' .. attrs.width) end
-    if attrs.height then table.insert(options, 'height=' .. attrs.height) end
+    if attrs.width then
+      local percentage = tostring(attrs.width):match('^(%d*%.?%d+)%%$')
+      local width = percentage and
+        ('%.6f'):format(tonumber(percentage) / 100):gsub('0+$', ''):gsub('%.$', '') .. '\\linewidth'
+        or attrs.width
+      table.insert(options, 'width=' .. width)
+    end
+    if attrs.height then
+      local percentage = tostring(attrs.height):match('^(%d*%.?%d+)%%$')
+      local height = percentage and
+        ('%.6f'):format(tonumber(percentage) / 100):gsub('0+$', ''):gsub('%.$', '') .. '\\textheight'
+        or attrs.height
+      table.insert(options, 'height=' .. height)
+    end
   end
 
   local include = '\\includegraphics'
