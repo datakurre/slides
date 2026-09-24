@@ -34,7 +34,7 @@ jobs:
         continue-on-error: true
 
       - name: Build presentation slide decks (PDF & HTML)
-        run: nix develop --command make build
+        run: nix develop --accept-flake-config --command make build
 
       - uses: actions/configure-pages@v5
 
