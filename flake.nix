@@ -1,6 +1,13 @@
 {
   description = "Modern presentation slides authoring environment: Markdown to Beamer PDF and Marp HTML with BPMN support";
 
+  nixConfig = {
+    extra-substituters = [ "https://datakurre.cachix.org" ];
+    extra-trusted-public-keys = [
+      "datakurre.cachix.org-1:V0XJax7WX2ziQVVMOfsmVITq/pBqhkbFjjzBcyiTbVA="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     bpmn-to-image = {
