@@ -206,7 +206,7 @@ are always rendered without labels, so they remain compact inline icons.
 ![](media/demo.mp4)
 ```
 - In **Marp HTML**: Renders a native `<video>` player with autoplay/controls.
-- In **Beamer PDF**: Extracts a poster snapshot using `ffmpeg` and links to the media.
+- In **Beamer PDF**: Extracts a poster snapshot using `ffmpeg`. Add a regular Markdown link to provide a click-through to hosted media.
 
 #### 6. Diagram Captions
 Use a shared caption block below a diagram:

@@ -263,9 +263,21 @@ Different histories and product models; BPMN XML is the common boundary.
 
 ![](media/ploneconf-2026/diagrams/contact-form.bpmn){simulator="true"}
 
+## Engine-Driven — Demo Recording
+
+![](media/ploneconf-2026/videos/contact-form-pip.webm){autoplay="false" loop="false"}
+
+[Watch the full recording online](https://datakurre.github.io/slides/media/ploneconf-2026/videos/contact-form-pip.webm)
+
 ## Content-Driven
 
 ![](media/ploneconf-2026/diagrams/review-process.bpmn){simulator="true"}
+
+## Content-Driven — Demo Recording
+
+![](media/ploneconf-2026/videos/review-process-pip.webm){autoplay="false" loop="false"}
+
+[Watch the full recording online](https://datakurre.github.io/slides/media/ploneconf-2026/videos/review-process-pip.webm)
 
 ## Case Management
 
@@ -277,6 +289,12 @@ Different histories and product models; BPMN XML is the common boundary.
 ![](media/ploneconf-2026/diagrams/renovation-page-review.bpmn){simulator="true"}
 :::
 :::
+
+## Case Management — Demo Recording
+
+![](media/ploneconf-2026/videos/renovation-project-pip.webm){autoplay="false" loop="false"}
+
+[Watch the full recording online](https://datakurre.github.io/slides/media/ploneconf-2026/videos/renovation-project-pip.webm)
 
 ---
 
