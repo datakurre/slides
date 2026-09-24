@@ -308,6 +308,29 @@ local function latex_image(img)
   return pandoc.RawInline('latex', '\\borderedimage{' .. border .. '}{' .. src .. '}')
 end
 
+local function latex_inline_symbol(src, attrs)
+  local safe_src = tostring(src):gsub('([{}])', '\\%1')
+  local options = {}
+  if attrs then
+    if attrs.width then table.insert(options, 'width=' .. attrs.width) end
+    if attrs.height then table.insert(options, 'height=' .. attrs.height) end
+  end
+
+  local include = '\\includegraphics'
+  if #options > 0 then
+    include = include .. '[' .. table.concat(options, ',') .. ']'
+  end
+  include = include .. '{' .. safe_src .. '}'
+
+  local border = latex_border_width(attrs and attrs.border)
+  if border then
+    include = '\\begingroup\\setlength{\\fboxrule}{' .. border .. '}\\setlength{\\fboxsep}{0pt}\\fbox{' .. include .. '}\\endgroup'
+  end
+
+  -- Match CSS vertical-align: middle behavior for inline symbol images.
+  return pandoc.RawInline('latex', '\\raisebox{-0.3\\height}{' .. include .. '}')
+end
+
 local function html_image(src, attributes, image_classes)
   local safe_src = tostring(src):gsub('&', '&amp;'):gsub('"', '&quot;')
   local styles = {}
@@ -353,6 +376,23 @@ local function bpmn_to_svg(bpmn_path, bg_color)
       error(('slides: bpmn-to-image failed for %s:\n%s\n'):format(bpmn_path, tostring(err)))
     end
   end
+
+  local svg = read_file(svg_path)
+  if svg then
+    local normalized = svg:gsub(
+      'font%-family:%s*IBMPlexSans[^;]*;',
+      "font-family: 'Liberation Sans', 'Fira Sans', 'DejaVu Sans', Arial, sans-serif;"
+    )
+    if normalized ~= svg then
+      local f = io.open(svg_path, 'wb')
+      if not f then
+        error(('slides: could not rewrite BPMN SVG font stack: %s\n'):format(svg_path))
+      end
+      f:write(normalized)
+      f:close()
+    end
+  end
+
   return svg_path
 end
 
@@ -413,15 +453,24 @@ local function bpmn_symbol_label(symbol_type, label)
   return label
 end
 
+local function apply_default_symbol_size(attrs)
+  -- Keep symbols inline with surrounding text unless the author explicitly
+  -- provides dimensions.
+  if attrs.width or attrs.height then
+    return attrs
+  end
+  attrs.height = '1.2em'
+  return attrs
+end
+
 local function symbol_inline(symbol_type, label, attributes)
   local path = render_bpmn_symbol(symbol_type, bpmn_symbol_label(symbol_type, label), attributes and attributes.background)
+  local attrs = apply_default_symbol_size(symbol_attributes(attributes))
+
   if is_latex then
-    local image = pandoc.Image(pandoc.List(), path)
-    image.attr = pandoc.Attr('', {}, symbol_attributes(attributes))
-    return latex_image(image)
+    return latex_inline_symbol(path, attrs)
   end
 
-  local attrs = symbol_attributes(attributes)
   local data_uri = file_to_data_uri(path, 'image/svg+xml')
   local image = pandoc.Image(pandoc.List(), data_uri or path)
   image.attr = pandoc.Attr('', {'bpmn-symbol'}, attrs)
@@ -582,13 +631,6 @@ function Image(img)
   if symbol_type then
     local label = symbol_label(img.attributes.label) or symbol_label(img.caption)
     return symbol_inline(symbol_type, label, img.attributes)
-  end
-
-  -- Let the Beamer template's pandocbounded macro size and center images.
-  -- Marp keeps the author-specified dimensions and alignment attributes.
-  if is_latex then
-    img.attributes.width = nil
-    img.attributes.height = nil
   end
 
   local ext = raw_src:match('%.(%w+)$')
@@ -830,7 +872,69 @@ end
 -- Beamer creates a title frame from document metadata. Marp needs that frame
 -- represented explicitly in the Markdown stream.
 function Pandoc(doc)
-  if not is_marp then
+  if is_latex then
+    local function is_notes_div(block)
+      return block.t == 'Div' and block.classes and block.classes:includes('notes')
+    end
+
+    local function is_single_media_para(block)
+      if block.t ~= 'Para' then return false end
+      if #block.content ~= 1 then return false end
+      local inline = block.content[1]
+      if inline.t ~= 'Image' then return false end
+      if inline.classes and inline.classes:includes('bpmn-symbol') then
+        return false
+      end
+      return true
+    end
+
+    local function is_slide_header(block)
+      return block.t == 'Header' and (block.level == 1 or block.level == 2)
+    end
+
+    local out = pandoc.List()
+    local i = 1
+    while i <= #doc.blocks do
+      local block = doc.blocks[i]
+      if block.t == 'Header' and block.level == 2 then
+        out:insert(block)
+
+        local j = i + 1
+        local slide_blocks = pandoc.List()
+        while j <= #doc.blocks and not is_slide_header(doc.blocks[j]) do
+          slide_blocks:insert(doc.blocks[j])
+          j = j + 1
+        end
+
+        local substantive = pandoc.List()
+        for _, sb in ipairs(slide_blocks) do
+          if not is_notes_div(sb) then
+            substantive:insert(sb)
+          end
+        end
+
+        if #substantive == 1 and is_single_media_para(substantive[1]) then
+          for _, sb in ipairs(slide_blocks) do
+            if sb == substantive[1] then
+              out:insert(pandoc.RawBlock('latex', '\\vfill'))
+              out:insert(sb)
+              out:insert(pandoc.RawBlock('latex', '\\vfill'))
+            else
+              out:insert(sb)
+            end
+          end
+        else
+          out:extend(slide_blocks)
+        end
+
+        i = j
+      else
+        out:insert(block)
+        i = i + 1
+      end
+    end
+
+    doc.blocks = out
     return doc
   end
 
