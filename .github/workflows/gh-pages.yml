@@ -33,6 +33,13 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         continue-on-error: true
 
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/slides
+          key: ${{ runner.os }}-slides-${{ hashFiles('flake.lock', 'pandoc/slides.lua', '**/*.md', '**/*.bpmn', '**/*.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-slides-
+
       - name: Build presentation slide decks (PDF & HTML)
         run: nix develop --accept-flake-config --command make build
 
