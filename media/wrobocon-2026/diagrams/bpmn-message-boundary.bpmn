@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_message_boundary" targetNamespace="http://example.com/bpmn/message-boundary">
+  <bpmn:message id="Message_cancel" name="Cancel" />
+  <bpmn:process id="Process_message_boundary" isExecutable="false">
+    <bpmn:startEvent id="Start"><bpmn:outgoing>Flow_start</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:task id="Task_work" name="Work"><bpmn:incoming>Flow_start</bpmn:incoming><bpmn:outgoing>Flow_done</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End"><bpmn:incoming>Flow_done</bpmn:incoming></bpmn:endEvent>
+    <bpmn:boundaryEvent id="Message_boundary" attachedToRef="Task_work"><bpmn:outgoing>Flow_cancel</bpmn:outgoing><bpmn:messageEventDefinition messageRef="Message_cancel" /></bpmn:boundaryEvent>
+    <bpmn:task id="Task_cancel" name="Cancel"><bpmn:incoming>Flow_cancel</bpmn:incoming><bpmn:outgoing>Flow_cancelled</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_cancelled"><bpmn:incoming>Flow_cancelled</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_start" sourceRef="Start" targetRef="Task_work" />
+    <bpmn:sequenceFlow id="Flow_done" sourceRef="Task_work" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_cancel" sourceRef="Message_boundary" targetRef="Task_cancel" />
+    <bpmn:sequenceFlow id="Flow_cancelled" sourceRef="Task_cancel" targetRef="End_cancelled" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_message_boundary"><bpmndi:BPMNPlane id="Plane_message_boundary" bpmnElement="Process_message_boundary">
+    <bpmndi:BPMNShape id="Start_di" bpmnElement="Start"><dc:Bounds x="80" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Task_work_di" bpmnElement="Task_work"><dc:Bounds x="160" y="80" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="End_di" bpmnElement="End"><dc:Bounds x="330" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Message_boundary_di" bpmnElement="Message_boundary"><dc:Bounds x="192" y="142" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Task_cancel_di" bpmnElement="Task_cancel"><dc:Bounds x="300" y="220" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="End_cancelled_di" bpmnElement="End_cancelled"><dc:Bounds x="460" y="242" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="Flow_start_di" bpmnElement="Flow_start"><di:waypoint x="116" y="118" /><di:waypoint x="160" y="118" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_done_di" bpmnElement="Flow_done"><di:waypoint x="260" y="118" /><di:waypoint x="330" y="118" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_cancel_di" bpmnElement="Flow_cancel"><di:waypoint x="210" y="178" /><di:waypoint x="210" y="260" /><di:waypoint x="300" y="260" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_cancelled_di" bpmnElement="Flow_cancelled"><di:waypoint x="400" y="260" /><di:waypoint x="460" y="260" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

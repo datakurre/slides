@@ -13,11 +13,11 @@
       <bpmn:outgoing>F4</bpmn:outgoing>
       <bpmn:outgoing>Flow_1lkh9ly</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="robot_run" name="Run Robot task" camunda:type="external" camunda:topic="robot.run">
+    <bpmn:serviceTask id="RunTask" name="Run Robot task" camunda:type="external" camunda:topic="robot.run">
       <bpmn:incoming>Flow_1lkh9ly</bpmn:incoming>
       <bpmn:outgoing>F5</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="robot_notify" name="Notify requester" camunda:type="external" camunda:topic="robot.notify">
+    <bpmn:serviceTask id="NotifyRequester" name="Notify requester" camunda:type="external" camunda:topic="robot.notify">
       <bpmn:incoming>F4</bpmn:incoming>
       <bpmn:outgoing>F6</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -31,11 +31,11 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="Review" />
     <bpmn:sequenceFlow id="F2" sourceRef="Review" targetRef="Decision" />
-    <bpmn:sequenceFlow id="F4" name="no" sourceRef="Decision" targetRef="robot_notify" />
-    <bpmn:sequenceFlow id="F5" sourceRef="robot_run" targetRef="Merge" />
-    <bpmn:sequenceFlow id="F6" sourceRef="robot_notify" targetRef="Merge" />
+    <bpmn:sequenceFlow id="F4" name="no" sourceRef="Decision" targetRef="NotifyRequester" />
+    <bpmn:sequenceFlow id="F5" sourceRef="RunTask" targetRef="Merge" />
+    <bpmn:sequenceFlow id="F6" sourceRef="NotifyRequester" targetRef="Merge" />
     <bpmn:sequenceFlow id="F7" sourceRef="Merge" targetRef="End" />
-    <bpmn:sequenceFlow id="Flow_1lkh9ly" name="yes" sourceRef="Decision" targetRef="robot_run" />
+    <bpmn:sequenceFlow id="Flow_1lkh9ly" name="yes" sourceRef="Decision" targetRef="RunTask" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_Process_Control">
     <bpmndi:BPMNPlane id="BPMNPlane_Process_Control" bpmnElement="Process_Control">
@@ -51,10 +51,10 @@
           <dc:Bounds x="297" y="25" width="54" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="robot_run_di" bpmnElement="robot_run">
+      <bpmndi:BPMNShape id="RunTask_di" bpmnElement="RunTask">
         <dc:Bounds x="398" y="30" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="robot_notify_di" bpmnElement="robot_notify">
+      <bpmndi:BPMNShape id="NotifyRequester_di" bpmnElement="NotifyRequester">
         <dc:Bounds x="398" y="170" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Merge_di" bpmnElement="Merge" isMarkerVisible="true">

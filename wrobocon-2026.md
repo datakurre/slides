@@ -14,7 +14,7 @@ fontsize: 14pt
 
 ## Automation Control Plane
 
-![](media/wrobocon-2026/diagrams/automation-control-plane.bpmn){simulator="true" scenario="media/wrobocon-2026/scenarios/automation-control-plane.toml"}
+![](media/wrobocon-2026/diagrams/automation-control-plane.bpmn){simulator="true"}
 
 ## Asko Soukka (RFCP®)
 
@@ -52,7 +52,6 @@ fontsize: 14pt
 - Robot Worker: execute Robot Tasks with Purjo
 - Hello World: build and run a task package
 - Testing orchestrated automation end to end
-- Wrap-up: resources and summary
 
 ---
 
@@ -65,44 +64,34 @@ fontsize: 14pt
 - Visual for people, precise for engines
 - A mature ecosystem of tools and runtimes
 
-Every process begins with a [start event]{.bpmn-symbol type="startEvent"}.
+The diagram is not just documentation. The diagram is the program.
 
-::: notes
-BPMN means Business Process Model and Notation and is standardized as ISO/IEC 19510.
-Unlike an informal flowchart, it has formal execution semantics. Models can be
-reviewed as documentation and deployed as executable process definitions.
-:::
+**The diagram is code.**
 
 ## Sequence Flow
 
-- Start: something triggers the process
-- Activities: the work happens
-- End: the process reaches an outcome
-- Tokens: visualize the execution and state
+- ![](bpmn-symbol:startEvent) **Start Event**: something triggers the process
+- ![](bpmn-symbol:task) **Activities**: the work happens
+- ![](bpmn-symbol:endEvent) **End Event**: the process reaches an outcome
 
-The token travels to [the next activity]{.bpmn-symbol type="userTask"} along a sequence flow.
-
-![](media/wrobocon-2026/diagrams/bpmn-sequence-flow.bpmn){height="30%" align="center" simulator="true"}
+![](media/wrobocon-2026/diagrams/bpmn-sequence-flow.bpmn){height="80%" align="center" simulator="true"}
 
 ## Activities
 
-- Activities are units of work
-- User Tasks, Script Tasks, Service Tasks, ...
-- Humans, engine, or robots can perform them
-- Sequence flows connect the work
+- Activities represent work performed by a person, script or service
+- The activity type communicates who or what performs the work
+- Each activity receives and passes execution onward through sequence flows
 
-An integration can be represented as a [service task]{.bpmn-symbol type="serviceTask"}.
+![](media/wrobocon-2026/diagrams/bpmn-activity-types.bpmn){height="45%"}
 
-![](media/wrobocon-2026/diagrams/bpmn-activity-types.bpmn){height="30%" align="center" simulator="true"}
+## Token Concept
 
-## Control Flow
+![](media/wrobocon-2026/diagrams/sample-process.bpmn){animated="true" width="60%"}
 
-- Gateways steer, split or merge
-- Exclusive (**XOR**) chooses one path
-- Parallel (**AND**) runs paths in parallel
-- Inclusive (**OR**) activates every matching path
-
-An [exclusive gateway]{.bpmn-symbol type="exclusiveGateway"} selects exactly one outgoing path.
+- A process instance starts with a **token** at the start event
+- The token travels along sequence flows into activities
+- Gateways split tokens into parallel paths or merge them
+- The instance ends when all active tokens are consumed
 
 ## Exclusive Gateways
 
@@ -122,19 +111,40 @@ An [inclusive gateway]{.bpmn-symbol type="inclusiveGateway"} activates every mat
 
 ![](media/wrobocon-2026/diagrams/bpmn-inclusive-merge.bpmn){simulator="true"}
 
-## Exception Handling
+## Timer Boundary Events
 
-- Attach an event to the work
-- Timers handle deadlines
-- Errors handle business exceptions
+::: columns
+::: {.column width="50%"}
+**Interrupting timers** ![](bpmn-symbol:timerBoundaryEvent) time out work and reroute execution.
 
-A [catch event]{.bpmn-symbol type="intermediateCatchEvent"} catches an exception while work is active.
+![](media/wrobocon-2026/diagrams/bpmn-timer-boundary-interrupting.bpmn){simulator="true"}
+:::
 
-![](media/wrobocon-2026/diagrams/bpmn-boundary-events.bpmn){height="100%" simulator="true"}
+::: {.column width="50%"}
+**Non-interrupting timers** ![](bpmn-symbol:nonInterruptingTimerBoundaryEvent) spawn extra tokens.
+
+![](media/wrobocon-2026/diagrams/bpmn-timer-boundary-non-interrupting.bpmn){simulator="true"}
+:::
+:::
+
+## Error and Message Boundary Events
+
+::: columns
+::: {.column width="50%"}
+**Error events** ![](bpmn-symbol:errorBoundaryEvent) route business errors to recovery paths.
+
+![](media/wrobocon-2026/diagrams/bpmn-error-boundary.bpmn){simulator="true"}
+:::
+::: {.column width="50%"}
+**Message events** ![](bpmn-symbol:messageBoundaryEvent) interrupt work when an message arrives.
+
+![](media/wrobocon-2026/diagrams/bpmn-message-boundary.bpmn){simulator="true"}
+:::
+:::
 
 ## One more BPMN example
 
-![](media/wrobocon-2026/diagrams/data-analysis.bpmn){scenario="media/wrobocon-2026/scenarios/data-analysis.toml"}
+![](media/wrobocon-2026/diagrams/data-analysis.bpmn){simulator="true"}
 
 ---
 
@@ -150,20 +160,36 @@ A [catch event]{.bpmn-symbol type="intermediateCatchEvent"} catches an exception
 
 ## Introducing Operaton
 
-- Open-source BPMN 2.0 workflow engine
-- A community fork of Camunda 7 Community Edition
-- A Java runtime with a REST API and Web UI
+::: columns
+::: {.column width="66%"}
+- Apache 2.0-licensed BPMN 2.0 engine
+- Community fork of Camunda 7 CE
+- Java runtime, Spring-extensible
+- Engine, REST API, Web UI
 - [start.operaton.org](https://start.operaton.org/)
-- [hub.docker.com/r/operaton/operaton](https://hub.docker.com/r/operaton/operaton)
+- [Docker image `operaton/operaton`](https://hub.docker.com/r/operaton/operaton)
+:::
+
+::: {.column width="40%"}
+![](media/wrobocon-2026/images/operaton-cockpit-process-definition.png){border="1px"}
+:::
+:::
 
 ## The External Task Pattern
 
-- The engine queues work; workers pull it
-- Topics decouple orchestration from execution
-- Workers run anywhere and scale horizontally
-- Operaton provides a REST API with long polling
+::: columns
+::: {.column width="50%"}
+- Engine queues work by topic
+- Workers fetch and lock
+- Workers complete or fail
+- Engine retries and raises incidents
+:::
+::: {.column width="50%"}
+![](media/wrobocon-2026/diagrams/external-service-task.bpmn){simulator="true"}
+:::
+:::
 
-![](media/wrobocon-2026/diagrams/bpmn-activity-types.bpmn){height="30%" align="center" animated="true" scenario="media/wrobocon-2026/scenarios/bpmn-activity-types.toml"}
+**Decoupled execution**: workers run anywhere and scale out.
 
 ---
 
@@ -171,37 +197,20 @@ A [catch event]{.bpmn-symbol type="intermediateCatchEvent"} catches an exception
 
 ## Robot Tasks as Service Tasks
 
-- Map BPMN service tasks to Robot tasks
-- Operaton owns state; robots task execution
-- Workers poll, fetch and complete tasks
-- Tasks "communicate" by process variables
-
-![](media/wrobocon-2026/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="media/wrobocon-2026/scenarios/bpmn-activity-types-robot.toml"}
-
-## Service Tasks as Queues
-
-- A topic names the work: `update-system`
-- Operaton queues work under that topic
-- Multiple workers can share the queue
-- The same topic can be reused in BPMN
-
-![](media/wrobocon-2026/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="media/wrobocon-2026/scenarios/bpmn-activity-types-robot.toml"}
-
-## External Task Worker
-
-- Fetch and lock a task
-- Receive process variables
-- Execute the Robot task
-- Return variables to process
-
-![](media/wrobocon-2026/diagrams/bpmn-activity-types-robot.bpmn){height="30%" animated="true" scenario="media/wrobocon-2026/scenarios/bpmn-activity-types-robot.toml"}
+- ![](bpmn-symbol:serviceTask) Service Tasks can be Robot tasks
+- Operaton owns state; Robot owns task execution
+- Operaton queues work under **topics**
+- Serice Task workers poll, fetch and complete tasks
+- Tasks "communicate" using process variables
 
 ## Introducing Purjo
 
-- Purjo connects Operaton topics to Robot tasks
+- Purjo worker connects Operaton topics to Robot tasks
 - Isolated environments provided via `uv`
 - Topic mappings live in `pyproject.toml`
 - Injects variables and secrets; adds return scope
+
+![](media/wrobocon-2026/diagrams/bpmn-activity-types.bpmn){height="80%" align="center" simulator="true"}
 
 ## Purjo `hello.robot`
 
@@ -380,22 +389,25 @@ Hello Process Completes External Task
 
 ---
 
-# Wrap-up {.section-slide}
+# Summary {.section-slide}
 
-## Resources
+## Summary and Resources
 
-- Operaton: [operaton.org](https://operaton.org)
-- Purjo: [pypi.org/project/purjo](https://pypi.org/project/purjo/)
-- "Opinionated BPMN 2.0 (bpmn-js) Modeler"
-- [pypi.org/project/robotframework-robotlibrary](https://pypi.org/project/robotframework-robotlibrary/)
-- [github.com/datakurre/robotframework-operaton](https://github.com/datakurre/robotframework-operaton)
-
-## Summary
-
+::: columns
+::: {.column width="40%"}
 - Robot Framework for task automation
 - BPMN and Operaton for control plane
-- Purjo connects Robot tasks to BPMN
+- Purjo bridges BPMN tasks to Robot
 - Operaton and bpmn.io ecosystems
+:::
+::: {.column width="60%"}
+- Operaton: [operaton.org](https://operaton.org)
+- Purjo: [pypi.org/project/purjo](https://pypi.org/project/purjo/)
+- [bpmn.io](https://bpmn.io), search for "Opinionated BPMN 2.0 (bpmn-js) Modeler"
+- [pypi.org/project/robotframework-robotlibrary](https://pypi.org/project/robotframework-robotlibrary/)
+- [github.com/datakurre/robotframework-operaton](https://github.com/datakurre/robotframework-operaton)
+:::
+:::
 
 ---
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_error_boundary" targetNamespace="http://example.com/bpmn/error-boundary">
+  <bpmn:process id="Process_error_boundary" isExecutable="false">
+    <bpmn:startEvent id="Start"><bpmn:outgoing>Flow_start</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:task id="Task_work" name="Work"><bpmn:incoming>Flow_start</bpmn:incoming><bpmn:outgoing>Flow_done</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End"><bpmn:incoming>Flow_done</bpmn:incoming></bpmn:endEvent>
+    <bpmn:boundaryEvent id="Error_boundary" attachedToRef="Task_work"><bpmn:outgoing>Flow_error</bpmn:outgoing><bpmn:errorEventDefinition /></bpmn:boundaryEvent>
+    <bpmn:task id="Task_recover" name="Recover"><bpmn:incoming>Flow_error</bpmn:incoming><bpmn:outgoing>Flow_recovered</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End_recovered"><bpmn:incoming>Flow_recovered</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_start" sourceRef="Start" targetRef="Task_work" />
+    <bpmn:sequenceFlow id="Flow_done" sourceRef="Task_work" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_error" sourceRef="Error_boundary" targetRef="Task_recover" />
+    <bpmn:sequenceFlow id="Flow_recovered" sourceRef="Task_recover" targetRef="End_recovered" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_error_boundary"><bpmndi:BPMNPlane id="Plane_error_boundary" bpmnElement="Process_error_boundary">
+    <bpmndi:BPMNShape id="Start_di" bpmnElement="Start"><dc:Bounds x="80" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Task_work_di" bpmnElement="Task_work"><dc:Bounds x="160" y="80" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="End_di" bpmnElement="End"><dc:Bounds x="330" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Error_boundary_di" bpmnElement="Error_boundary"><dc:Bounds x="192" y="142" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Task_recover_di" bpmnElement="Task_recover"><dc:Bounds x="300" y="220" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="End_recovered_di" bpmnElement="End_recovered"><dc:Bounds x="460" y="242" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="Flow_start_di" bpmnElement="Flow_start"><di:waypoint x="116" y="118" /><di:waypoint x="160" y="118" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_done_di" bpmnElement="Flow_done"><di:waypoint x="260" y="118" /><di:waypoint x="330" y="118" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_error_di" bpmnElement="Flow_error"><di:waypoint x="210" y="178" /><di:waypoint x="210" y="260" /><di:waypoint x="300" y="260" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Flow_recovered_di" bpmnElement="Flow_recovered"><di:waypoint x="400" y="260" /><di:waypoint x="460" y="260" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>
