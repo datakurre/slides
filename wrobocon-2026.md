@@ -95,19 +95,19 @@ The diagram is not just documentation. The diagram is the program.
 
 ## Exclusive Gateways
 
-An [exclusive gateway]{.bpmn-symbol type="exclusiveGateway"} evaluates conditions and chooses one path.
+[exclusive gateway]{.bpmn-symbol type="exclusiveGateway"} **Exclusive Gateway** evaluates conditions and chooses one path.
 
 ![](media/wrobocon-2026/diagrams/bpmn-exclusive-merge.bpmn){simulator="true"}
 
 ## Parallel Gateways
 
-A [parallel gateway]{.bpmn-symbol type="parallelGateway"} activates every outgoing path.
+[parallel gateway]{.bpmn-symbol type="parallelGateway"} **Parallel Gateway** activates every outgoing path.
 
 ![](media/wrobocon-2026/diagrams/bpmn-parallel-gateway.bpmn){simulator="true"}
 
 ## Inclusive Gateways
 
-An [inclusive gateway]{.bpmn-symbol type="inclusiveGateway"} activates every matching path.
+[inclusive gateway]{.bpmn-symbol type="inclusiveGateway"} **Inclusive Gateway** activates every matching path.
 
 ![](media/wrobocon-2026/diagrams/bpmn-inclusive-merge.bpmn){simulator="true"}
 
@@ -115,13 +115,13 @@ An [inclusive gateway]{.bpmn-symbol type="inclusiveGateway"} activates every mat
 
 ::: columns
 ::: {.column width="50%"}
-**Interrupting timers** ![](bpmn-symbol:timerBoundaryEvent) time out work and reroute execution.
+![](bpmn-symbol:timerBoundaryEvent) **Interrupting timers**  time out work and reroute execution.
 
 ![](media/wrobocon-2026/diagrams/bpmn-timer-boundary-interrupting.bpmn){simulator="true"}
 :::
 
 ::: {.column width="50%"}
-**Non-interrupting timers** ![](bpmn-symbol:nonInterruptingTimerBoundaryEvent) spawn extra tokens.
+![](bpmn-symbol:nonInterruptingTimerBoundaryEvent) **Non-interrupting timers** spawn extra tokens.
 
 ![](media/wrobocon-2026/diagrams/bpmn-timer-boundary-non-interrupting.bpmn){simulator="true"}
 :::
@@ -131,12 +131,12 @@ An [inclusive gateway]{.bpmn-symbol type="inclusiveGateway"} activates every mat
 
 ::: columns
 ::: {.column width="50%"}
-**Error events** ![](bpmn-symbol:errorBoundaryEvent) route business errors to recovery paths.
+![](bpmn-symbol:errorBoundaryEvent) **Error events** route business errors to recovery paths.
 
 ![](media/wrobocon-2026/diagrams/bpmn-error-boundary.bpmn){simulator="true"}
 :::
 ::: {.column width="50%"}
-**Message events** ![](bpmn-symbol:messageBoundaryEvent) interrupt work when an message arrives.
+![](bpmn-symbol:messageBoundaryEvent) **Message events** interrupt work when an message arrives.
 
 ![](media/wrobocon-2026/diagrams/bpmn-message-boundary.bpmn){simulator="true"}
 :::
